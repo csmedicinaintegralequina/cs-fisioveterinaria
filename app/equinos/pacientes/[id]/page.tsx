@@ -25,7 +25,7 @@ const { data: historia } = await supabase
   .eq("paciente id", id)
   .maybeSingle();
 const { data: diagnosticosPaciente } = await supabase
-  .from("Diagnósticos paciente")
+  .from('"Diagnósticos paciente"')
   .select("*")
   .eq("Paciente id", id);
   const { data: diagnosticos } = await supabase
@@ -38,7 +38,7 @@ const { data: estructuras } = await supabase
   const { data: sesiones } = await supabase
   .from("Sesiones")
   .select("*")
-  .eq("Paciente id", id)
+  .eq('"Paciente id"', id)
   .order("Fecha de sesión", {
     ascending: true,
   });
