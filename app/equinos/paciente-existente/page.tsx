@@ -1,8 +1,9 @@
 "use client";
+export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import EquinosHeader from "@/app/components/EquinosHeader";
 
 export default function NuevoPaciente() {
@@ -17,17 +18,16 @@ export default function NuevoPaciente() {
   const [color, setColor] = useState("");
   const searchParams = useSearchParams();
 
-const propietarioPreseleccionado =
-  searchParams.get("propietario");
 
   useEffect(() => {
-    cargarPropietarios();
-  }, []);
-useEffect(() => {
+  const propietarioPreseleccionado =
+    searchParams.get("propietario");
+
   if (propietarioPreseleccionado) {
     setPropietarioId(propietarioPreseleccionado);
   }
-}, [propietarioPreseleccionado]);
+}, [searchParams]);
+
   async function cargarPropietarios() {
     const { data, error } = await supabase
       .from("Propietarios")
