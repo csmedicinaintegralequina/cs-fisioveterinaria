@@ -3,12 +3,13 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export default function HistoriaClinica() {
   const params = useParams();
 
   const pacienteId = params.id as string;
-
+  const router = useRouter();
   const [motivoConsulta, setMotivoConsulta] = useState("");
   const [anamnesis, setAnamnesis] = useState("");
   const [examenFisico, setExamenFisico] = useState("");
@@ -35,10 +36,7 @@ export default function HistoriaClinica() {
 
     alert("Historia clínica guardada");
 
-    setMotivoConsulta("");
-    setAnamnesis("");
-    setExamenFisico("");
-    setObservaciones("");
+router.push(`/equinos/pacientes/${pacienteId}`);
   }
 
   return (
