@@ -31,12 +31,6 @@ const {
   .from("Diagnósticos paciente")
   .select("*");
 
-console.log(diagnosticosPaciente);
-
-console.log("ID PACIENTE:", id);
-console.log("DIAGNOSTICOS PACIENTE:", diagnosticosPaciente);
-console.log("ERROR DIAGNOSTICOS:", errorDiagnosticos);
-  console.log("diagnosticosPaciente", diagnosticosPaciente);
   const { data: diagnosticos } = await supabase
   .from("Diagnósticos")
   .select("*");
@@ -307,11 +301,6 @@ className="
 Cantidad diagnósticos:
 {JSON.stringify(diagnosticosPaciente)}
 </p>
-<div className="bg-red-100 p-4 rounded mb-4">
-  <p>ID del paciente: {id}</p>
-  <p>Cantidad de diagnósticos: {diagnosticosPaciente?.length}</p>
-  <pre>{JSON.stringify(diagnosticosPaciente, null, 2)}</pre>
-</div>
 
 {diagnosticosPaciente && diagnosticosPaciente.length > 0 && (
   <div className="mt-8 space-y-4">
@@ -332,9 +321,9 @@ Cantidad diagnósticos:
       <div className="flex items-center justify-between">
 
         <div>
-      <pre>
-{JSON.stringify(diag, null, 2)}
-</pre>
+    <p className="font-bold text-xl text-[#0B6A74] mb-2">
+  {diagnostico?.Nombre || "Diagnóstico"}
+</p>
 
           <p>
             <strong>Estructura:</strong>{" "}
