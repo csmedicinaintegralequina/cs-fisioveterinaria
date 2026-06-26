@@ -24,10 +24,18 @@ const { data: historia } = await supabase
   .select("*")
   .eq("paciente id", id)
   .maybeSingle();
-const { data: diagnosticosPaciente } = await supabase
-  .from('"Diagnósticos paciente"')
+const {
+  data: diagnosticosPaciente,
+  error: errorDiagnosticos,
+} = await supabase
+  .from("Diagnósticos paciente")
   .select("*")
   .eq("Paciente id", id);
+
+console.log("ID PACIENTE:", id);
+console.log("DIAGNOSTICOS PACIENTE:", diagnosticosPaciente);
+console.log("ERROR DIAGNOSTICOS:", errorDiagnosticos);
+  console.log("diagnosticosPaciente", diagnosticosPaciente);
   const { data: diagnosticos } = await supabase
   .from("Diagnósticos")
   .select("*");
@@ -38,7 +46,7 @@ const { data: estructuras } = await supabase
   const { data: sesiones } = await supabase
   .from("Sesiones")
   .select("*")
-  .eq('"Paciente id"', id)
+  .eq("Paciente id", id)
   .order("Fecha de sesión", {
     ascending: true,
   });
@@ -294,6 +302,10 @@ className="
 >
   ➕ Agregar Diagnóstico
 </a>
+<p className="text-red-600">
+Cantidad diagnósticos:
+{JSON.stringify(diagnosticosPaciente)}
+</p>
 {diagnosticosPaciente && diagnosticosPaciente.length > 0 && (
   <div className="mt-8 space-y-4">
 
@@ -305,7 +317,6 @@ className="
   const estructura = estructuras?.find(
     (e) => e.id === diag["Estructura id"]
   );
-
   return (
     <div
       key={diag.id}
@@ -314,9 +325,9 @@ className="
       <div className="flex items-center justify-between">
 
         <div>
-          <p className="font-bold text-xl text-[#0B6A74] mb-2">
-            {diagnostico?.Nombre || "Diagnóstico"}
-          </p>
+       <p className="font-bold text-xl text-[#0B6A74] mb-2">
+  Diagnóstico ID: {diag["Diagnpostico id"]}
+</p>
 
           <p>
             <strong>Estructura:</strong>{" "}
