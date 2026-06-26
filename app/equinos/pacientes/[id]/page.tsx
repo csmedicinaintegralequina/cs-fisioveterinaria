@@ -30,7 +30,9 @@ const {
 } = await supabase
   .from("Diagnósticos paciente")
   .select("*")
-  .eq("Paciente id", id);
+  .select("*");
+
+console.log(diagnosticosPaciente);
 
 console.log("ID PACIENTE:", id);
 console.log("DIAGNOSTICOS PACIENTE:", diagnosticosPaciente);
