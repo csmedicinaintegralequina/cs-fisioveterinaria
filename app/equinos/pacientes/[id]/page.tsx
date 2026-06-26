@@ -325,9 +325,9 @@ Cantidad diagnósticos:
       <div className="flex items-center justify-between">
 
         <div>
-       <p className="font-bold text-xl text-[#0B6A74] mb-2">
-  Diagnóstico ID: {diag["Diagnpostico id"]}
-</p>
+      <pre>
+{JSON.stringify(diag, null, 2)}
+</pre>
 
           <p>
             <strong>Estructura:</strong>{" "}
