@@ -24,13 +24,13 @@ const { data: historia } = await supabase
   .select("*")
   .eq("paciente id", id)
   .maybeSingle();
-const {
-  data: diagnosticosPaciente,
-  error: errorDiagnosticos,
-} = await supabase
+const respuestaDiagnosticos = await supabase
   .from("Diagnósticos paciente")
-  .select("*")
   .select("*");
+
+console.log("RESPUESTA COMPLETA", respuestaDiagnosticos);
+
+const diagnosticosPaciente = respuestaDiagnosticos.data;
 
 console.log(diagnosticosPaciente);
 
