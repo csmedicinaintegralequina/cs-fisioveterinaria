@@ -172,7 +172,7 @@ const { error } = await supabase
 
 if (error) {
   console.log("ERROR COMPLETO:", error);
-  alert(JSON.stringify(error));
+
   return;
 }
 const { data: terapiasViejas } = await supabase

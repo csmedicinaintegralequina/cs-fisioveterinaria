@@ -102,7 +102,7 @@ const { data: sesionCreada, error } =
 
 if (error) {
   console.log("ERROR COMPLETO:", error);
-  alert(JSON.stringify(error));
+
   return;
 }
 console.log("SESION CREADA:", sesionCreada);

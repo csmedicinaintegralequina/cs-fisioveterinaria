@@ -297,10 +297,7 @@ className="
 >
   ➕ Agregar Diagnóstico
 </a>
-<p className="text-red-600">
-Cantidad diagnósticos:
-{JSON.stringify(diagnosticosPaciente)}
-</p>
+
 
 {diagnosticosPaciente && diagnosticosPaciente.length > 0 && (
   <div className="mt-8 space-y-4">
