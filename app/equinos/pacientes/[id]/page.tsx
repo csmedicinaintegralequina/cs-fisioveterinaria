@@ -29,7 +29,8 @@ const {
   error: errorDiagnosticos,
 } = await supabase
   .from("Diagnósticos paciente")
-  .select("*");
+  .select("*")
+  .eq("Paciente id", id);
 
   const { data: diagnosticos } = await supabase
   .from("Diagnósticos")
