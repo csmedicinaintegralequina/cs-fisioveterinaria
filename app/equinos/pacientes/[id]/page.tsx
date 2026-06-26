@@ -24,13 +24,12 @@ const { data: historia } = await supabase
   .select("*")
   .eq("paciente id", id)
   .maybeSingle();
-const respuestaDiagnosticos = await supabase
+const {
+  data: diagnosticosPaciente,
+  error: errorDiagnosticos,
+} = await supabase
   .from("Diagnósticos paciente")
   .select("*");
-
-console.log("RESPUESTA COMPLETA", respuestaDiagnosticos);
-
-const diagnosticosPaciente = respuestaDiagnosticos.data;
 
 console.log(diagnosticosPaciente);
 
@@ -308,6 +307,12 @@ className="
 Cantidad diagnósticos:
 {JSON.stringify(diagnosticosPaciente)}
 </p>
+<div className="bg-red-100 p-4 rounded mb-4">
+  <p>ID del paciente: {id}</p>
+  <p>Cantidad de diagnósticos: {diagnosticosPaciente?.length}</p>
+  <pre>{JSON.stringify(diagnosticosPaciente, null, 2)}</pre>
+</div>
+
 {diagnosticosPaciente && diagnosticosPaciente.length > 0 && (
   <div className="mt-8 space-y-4">
 
