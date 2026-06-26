@@ -13,11 +13,11 @@ export default function Home() {
         className="mb-4"
       />
 
-      <h1 className="text-5xl font-bold text-[#0B6A74] text-center mb-3">
+      <h1 className="text-3xl md:text-5xl font-bold text-[#0B6A74] text-center mb-2">
         CS Fisioveterinaria
       </h1>
 
-      <p className="text-[#6B7280] text-center mb-12 text-lg">
+      <p className="text-[#6B7280] text-center mb-10 text-base md:text-lg px-4 leading-relaxed">
         Rehabilitación • Fisioterapia • Medicina Integral
       </p>
 
@@ -31,11 +31,11 @@ export default function Home() {
               alt="Equinos"
               width={800}
               height={400}
-         className="w-full h-64 object-cover"
+         className="w-full h-52 md:h-64 object-cover"
             />
 
-            <div className="p-6 text-center">
-              <h2 className="text-3xl font-bold text-[#0B6A74]">
+           <div className="p-5 md:p-6 text-center">
+              <h2 className="text-2xl md:text-3xl font-bold text-[#0B6A74]">
                 Equinos
               </h2>
             </div>
@@ -50,12 +50,12 @@ export default function Home() {
             alt="Pequeños animales"
             width={800}
             height={400}
-            className="w-full h-64 object-cover"
+           className="w-full h-52 md:h-64 object-cover"
           />
 
-          <div className="p-6 text-center">
+         <div className="p-5 md:p-6 text-center">
 
-            <h2 className="text-3xl font-bold text-[#0B6A74]">
+            <h2 className="text-2xl md:text-3xl font-bold text-[#0B6A74]">
               Pequeños animales
             </h2>
 
