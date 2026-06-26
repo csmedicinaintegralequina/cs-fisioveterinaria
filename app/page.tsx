@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#F4F1EB] flex flex-col items-center py-16 px-6">
+    <main className="min-h-screen bg-[#F4F1EB] flex flex-col items-center py-10 px-4 md:py-16 md:px-6">
 
       <Image
         src="/logocs.png"
@@ -17,14 +17,14 @@ export default function Home() {
         CS Fisioveterinaria
       </h1>
 
-      <p className="text-[#6B7280] text-center mb-10 text-base md:text-lg px-4 leading-relaxed">
+      <p className="text-[#6B7280] text-center mb-10 text-sm md:text-lg px-4 leading-relaxed">
         Rehabilitación • Fisioterapia • Medicina Integral
       </p>
 
-      <div className="grid gap-8 w-full max-w-2xl">
+<div className="grid gap-6 md:gap-8 w-full max-w-2xl">
 
         <Link href="/equinos">
-          <div className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer">
+          <div className="bg-white rounded-3xl overflow-hidden shadow-md md:shadow-lg hover:shadow-xl md:hover:shadow-2xl transition-all cursor-pointer mx-2">
 
             <Image
               src="/caballo1.jpg"
@@ -43,7 +43,7 @@ export default function Home() {
           </div>
         </Link>
 
-        <div className="bg-white rounded-3xl overflow-hidden shadow-lg opacity-80">
+        <div className="bg-white rounded-3xl overflow-hidden shadow-lg opacity-80 mx-2">
 
           <Image
             src="/perro-gato.webp"
