@@ -31,7 +31,7 @@ export default function Home() {
               alt="Equinos"
               width={800}
               height={400}
-         className="w-full h-56 md:h-72 object-cover"
+         className="w-full h-60 md:h-72 object-contain bg-white"
             />
 
            <div className="p-5 md:p-6 text-center">
