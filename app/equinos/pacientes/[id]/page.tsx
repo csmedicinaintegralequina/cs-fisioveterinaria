@@ -518,44 +518,19 @@ Cantidad diagnósticos:
     👁 Ver
   </a>
 
-  <a
-    href={`/equinos/pacientes/${id}/sesiones/${sesion.id}/editar`}
-    className="
-      text-sm
-      text-amber-600
-      font-semibold
-    "
-  >
-   <a
+<a
   href={`/equinos/pacientes/${id}/sesiones/${sesion.id}/editar`}
-  className="
-    text-sm
-    text-amber-600
-    font-semibold
-  "
+  className="text-sm text-amber-600 font-semibold"
 >
   ✏️
 </a>
-  </a>
 
-  <button
-    className="
-      text-sm
-      text-red-600
-      font-semibold
-    "
-  >
-   <a
+<a
   href={`/equinos/pacientes/${id}/sesiones/${sesion.id}/eliminar`}
-  className="
-    text-sm
-    text-red-600
-    font-semibold
-  "
+  className="text-sm text-red-600 font-semibold"
 >
   🗑
 </a>
-  </button>
 
 </div>
   </a>
