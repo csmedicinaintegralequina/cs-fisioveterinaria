@@ -10,7 +10,7 @@ export default function EquinosHeader({
   return (
     <div className="mx-0 mt-0">
 
-      <div className="relative h-24 overflow-hidden">
+      <div className="relative h-20 md:h-24 overflow-hidden rounded-b-2xl">
 
         <Image
           src="/caballosalto.jpg"
@@ -23,12 +23,12 @@ export default function EquinosHeader({
 
        <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
 
-  <h1 className="text-3xl font-bold">
+  <h1 className="text-2xl md:text-3xl font-bold text-center px-4">
     {titulo}
   </h1>
 
   {subtitulo && (
-    <p className="text-sm mt-1">
+    <p className="text-xs md:text-sm mt-1 opacity-90">
       {subtitulo}
     </p>
   )}

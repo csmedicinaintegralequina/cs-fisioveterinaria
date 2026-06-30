@@ -136,6 +136,7 @@ className="
   font-semibold
   text-amber-600
   hover:text-amber-700
+  hover:underline
   transition-all
 "
   >
@@ -162,7 +163,7 @@ className="
         </div>
       )}
 
-      <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl p-8">
+      <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl p-6 md:p-8">
         <div className="flex items-center justify-between mb-6">
   <h2 className="text-xl font-bold text-[#0B6A74]">
     🐴 Datos del paciente
@@ -175,6 +176,7 @@ className="
   font-semibold
   text-amber-600
   hover:text-amber-700
+  hover:underline
   transition-all
 "
   >
@@ -205,7 +207,7 @@ className="
         </div>
       </div>
          
-   <div className="max-w-4xl mx-auto mt-6 bg-white rounded-3xl shadow-xl p-8">
+   <div className="max-w-4xl mx-auto mt-6 bg-white rounded-3xl shadow-xl p-6 md:p-8">
  <div className="flex items-center justify-between mb-6">
   <h2 className="text-2xl font-bold text-[#0B6A74]">
     📋 Historia Clínica
@@ -219,6 +221,7 @@ className="
         font-semibold
         text-amber-600
         hover:text-amber-700
+        hover:underline
         transition-all
       "
     >
@@ -263,8 +266,8 @@ className="
         bg-[#0B6A74]
         text-white
         font-bold
-        px-6
-        py-4
+        px-5 md:px-6
+py-3 md:py-4
         rounded-2xl
         shadow-lg
         hover:scale-105
@@ -276,7 +279,7 @@ className="
   )}
 </div>
 
-      <div className="max-w-4xl mx-auto mt-6 bg-white rounded-3xl shadow-xl p-8">
+      <div className="max-w-4xl mx-auto mt-6 bg-white rounded-3xl shadow-xl p-6 md:p-8">
         <h2 className="text-2xl font-bold text-[#0B6A74] mb-6">
           🩺 Diagnósticos
         </h2>
@@ -288,8 +291,8 @@ className="
     bg-[#0B6A74]
     text-white
     font-bold
-    px-6
-    py-4
+    px-5 md:px-6
+py-3 md:py-4
     rounded-2xl
     shadow-lg
     hover:scale-105
@@ -314,7 +317,7 @@ className="
   return (
     <div
       key={diag.id}
-      className="border rounded-2xl p-4 bg-gray-50"
+      className="border rounded-2xl p-4 bg-gray-50 shadow-sm"
     >
       <div className="flex items-center justify-between">
 
@@ -363,6 +366,7 @@ className="
               font-semibold
               text-amber-600
               hover:text-amber-700
+              hover:underline
             "
           >
             ✏️ Editar
@@ -390,7 +394,7 @@ className="
 )}
 </div>
      
-      <div className="max-w-4xl mx-auto mt-8 bg-white rounded-3xl shadow-xl p-8">
+      <div className="max-w-4xl mx-auto mt-8 bg-white rounded-3xl shadow-xl p-6 md:p-8">
 
   <div className="flex items-center justify-between mb-6">
 
@@ -437,6 +441,7 @@ className="
       p-4
       hover:bg-gray-50
       transition-all
+      shadow-sm
     "
   >
 
@@ -536,7 +541,7 @@ className="
   )}
 
 </div>
-<div className="max-w-4xl mx-auto mt-8 bg-white rounded-3xl shadow-xl p-8">
+<div className="max-w-4xl mx-auto mt-8 bg-white rounded-3xl shadow-xl p-6 md:p-8">
 
   <h2 className="text-xl font-bold text-[#0B6A74] mb-6">
     📈 Evolución temporal

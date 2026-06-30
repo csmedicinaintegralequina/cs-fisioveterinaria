@@ -55,7 +55,7 @@ export default function Equinos() {
               Nuevo propietario
             </h2>
 
-            <p>className="text-sm md:text-base"
+            <p className="text-sm md:text-base">
               Crear ficha del propietario
             </p>
           </div>
@@ -81,7 +81,7 @@ export default function Equinos() {
               Nuevo paciente
             </h2>
 
-            <p> className="text-sm md:text-base"
+            <p className="text-sm md:text-base"> 
               Crear ficha clínica
             </p>
           </div>
@@ -107,7 +107,7 @@ export default function Equinos() {
               Buscar pacientes
             </h2>
 
-            <p> className="text-sm md:text-base"
+            <p className="text-sm md:text-base"> 
               Buscar y editar pacientes
             </p>
           </div>
@@ -133,7 +133,7 @@ export default function Equinos() {
               Pacientes frecuentes
             </h2>
 
-            <p> className="text-sm md:text-base"
+            <p className="text-sm md:text-base"> 
               Acceso rápido
             </p>
           </div>
