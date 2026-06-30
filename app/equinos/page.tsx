@@ -138,7 +138,32 @@ export default function Equinos() {
             </p>
           </div>
         </Link>
+<Link href="/equinos/administracion">
+  <div
+    className="
+      bg-[#4B5563]
+      text-white
+      rounded-3xl
+      p-6
+      shadow-xl
+      hover:scale-105
+      hover:shadow-2xl
+      transition-all
+      cursor-pointer
+    "
+  >
+    <div className="text-4xl mb-2">⚙️</div>
 
+    <h2 className="text-2xl font-bold">
+      Administración
+    </h2>
+
+    <p>
+      Configuración del sistema
+    </p>
+
+  </div>
+</Link>
       </div>
 
     </main>
