@@ -319,7 +319,7 @@ py-3 md:py-4
       key={diag.id}
       className="border rounded-2xl p-4 bg-gray-50 shadow-sm"
     >
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between items-start gap-6">
 
         <div>
     <p className="font-bold text-xl text-[#0B6A74] mb-2">
@@ -357,34 +357,25 @@ py-3 md:py-4
           )}
         </div>
 
-        <div className="flex gap-4 self-start">
+        <div className="flex flex-col items-center gap-4 shrink-0">
 
-          <a
-            href={`/equinos/pacientes/${paciente.id}/editar-diagnostico/${diag.id}`}
-            className="
-              text-sm
-              font-semibold
-              text-amber-600
-              hover:text-amber-700
-              hover:underline
-            "
-          >
-            ✏️ Editar
-          </a>
+  <a
+    href={`/equinos/pacientes/${paciente.id}/editar-diagnostico/${diag.id}`}
+    className="text-2xl hover:scale-110 transition"
+    title="Editar"
+  >
+    ✏️
+  </a>
 
-<a
-  href={`/equinos/pacientes/${paciente.id}/eliminar-diagnostico/${diag.id}`}
-  className="
-    text-sm
-    font-semibold
-    text-red-600
-    hover:text-red-700
-  "
->
-  🗑️ Eliminar
-</a>
+  <a
+    href={`/equinos/pacientes/${paciente.id}/eliminar-diagnostico/${diag.id}`}
+    className="text-2xl hover:scale-110 transition"
+    title="Eliminar"
+  >
+    🗑️
+  </a>
 
-        </div>
+</div>
 
       </div>
     </div>
