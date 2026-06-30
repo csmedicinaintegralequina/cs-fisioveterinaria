@@ -7,7 +7,7 @@ export default function Equinos() {
 
      {/* Header */}
 
-<div className="relative h-64 rounded-3xl overflow-hidden mb-10 shadow-xl">
+<div className="relative h-48 md:h-64 rounded-3xl overflow-hidden mb-8 shadow-xl">
 
   <Image
     src="/caballosalto.jpg"
@@ -20,11 +20,11 @@ export default function Equinos() {
 
   <div className="absolute inset-0 flex flex-col justify-center items-center text-white">
 
-    <h1 className="text-6xl font-bold">
+<h1 className="text-4xl md:text-6xl font-bold text-center">
       Equinos
     </h1>
 
-    <p className="text-xl mt-2">
+<p className="text-base md:text-xl mt-2 text-center px-4">
       Medicina Integral Equina
     </p>
 
@@ -33,7 +33,7 @@ export default function Equinos() {
 </div>
 
       {/* Menú */}
-      <div className="max-w-xl mx-auto flex flex-col gap-5">
+      <div className="max-w-xl mx-auto flex flex-col gap-4">
 
         <Link href="/equinos/nuevo-propietario">
           <div
@@ -41,7 +41,7 @@ export default function Equinos() {
             bg-[#2E8B96]
             text-white
             rounded-3xl
-            p-6
+            p-5 md:p-6
             shadow-xl
             hover:scale-105
             hover:shadow-2xl
@@ -49,13 +49,13 @@ export default function Equinos() {
             cursor-pointer
           "
           >
-            <div className="text-4xl mb-2">👤</div>
+            <div className="text-3xl md:text-4xl mb-2">👤</div>
 
-            <h2 className="text-2xl font-bold">
+            <h2 className="text-xl md:text-2xl font-bold">
               Nuevo propietario
             </h2>
 
-            <p>
+            <p>className="text-sm md:text-base"
               Crear ficha del propietario
             </p>
           </div>
@@ -67,7 +67,7 @@ export default function Equinos() {
             bg-[#0B6A74]
             text-white
             rounded-3xl
-            p-6
+            p-5 md:p-6
             shadow-xl
             hover:scale-105
             hover:shadow-2xl
@@ -75,13 +75,13 @@ export default function Equinos() {
             cursor-pointer
           "
           >
-            <div className="text-4xl mb-2">🐴</div>
+            <div className="text-3xl md:text-4xl mb-2">🐴</div>
 
-            <h2 className="text-2xl font-bold">
+            <h2 className="text-xl md:text-2xl font-bold">
               Nuevo paciente
             </h2>
 
-            <p>
+            <p> className="text-sm md:text-base"
               Crear ficha clínica
             </p>
           </div>
@@ -93,7 +93,7 @@ export default function Equinos() {
             bg-[#5D8A93]
             text-white
             rounded-3xl
-            p-6
+            p-5 md:p-6
             shadow-xl
             hover:scale-105
             hover:shadow-2xl
@@ -101,13 +101,13 @@ export default function Equinos() {
             cursor-pointer
           "
           >
-            <div className="text-4xl mb-2">🔎</div>
+            <div className="text-3xl md:text-4xl mb-2">🔎</div>
 
-            <h2 className="text-2xl font-bold">
+            <h2 className="text-xl md:text-2xl font-bold">
               Buscar pacientes
             </h2>
 
-            <p>
+            <p> className="text-sm md:text-base"
               Buscar y editar pacientes
             </p>
           </div>
@@ -119,7 +119,7 @@ export default function Equinos() {
             bg-[#6CB4BE]
             text-white
             rounded-3xl
-            p-6
+            p-5 md:p-6
             shadow-xl
             hover:scale-105
             hover:shadow-2xl
@@ -127,13 +127,13 @@ export default function Equinos() {
             cursor-pointer
           "
           >
-            <div className="text-4xl mb-2">⭐</div>
+            <div className="text-3xl md:text-4xl mb-2">⭐</div>
 
-            <h2 className="text-2xl font-bold">
+            <h2 className="text-xl md:text-2xl font-bold">
               Pacientes frecuentes
             </h2>
 
-            <p>
+            <p> className="text-sm md:text-base"
               Acceso rápido
             </p>
           </div>
