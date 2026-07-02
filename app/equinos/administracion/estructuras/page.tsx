@@ -1,13 +1,30 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import EquinosHeader from "@/app/components/EquinosHeader";
 
-export default async function Estructuras() {
+export default function Estructuras() {
 
-  const { data: estructuras } = await supabase
-    .from("Estructuras anatómicas")
-    .select("*")
-    .order("Nombre");
+  const [estructuras, setEstructuras] = useState<any[]>([]);
+
+  useEffect(() => {
+    cargarEstructuras();
+  }, []);
+
+  async function cargarEstructuras() {
+
+    const { data } = await supabase
+      .from("Estructuras anatómicas")
+      .select("*")
+      .order("Nombre");
+
+    if (data) {
+      setEstructuras(data);
+    }
+
+  }
 
   return (
 
