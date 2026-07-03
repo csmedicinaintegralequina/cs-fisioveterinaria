@@ -10,7 +10,7 @@ export default function EquinosHeader({
   return (
     <div className="mx-0 mt-0">
 
-      <div className="relative h-20 md:h-24 overflow-hidden rounded-b-2xl">
+      <div className="relative h-20 md:h-24 overflow-hidden">
 
         <Image
           src="/caballosalto.jpg"

@@ -1,6 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import EquinosHeader from "@/app/components/EquinosHeader";
-
+import PequenosHeader from "@/app/components/PequenosHeader";
 export default async function FichaPaciente({
   params,
 }: {
@@ -120,7 +119,7 @@ const icono =
     : "🐾";
   return (
     <main className="min-h-screen bg-[#F4F1EB] p-6">
-      <EquinosHeader
+      <PequenosHeader
   titulo={paciente.Nombre}
   subtitulo="Ficha clínica"
 />

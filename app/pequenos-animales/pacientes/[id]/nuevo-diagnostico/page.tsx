@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import PequenosHeader from "@/app/components/PequenosHeader";
 
 export default function NuevoDiagnostico() {
   const params = useParams();
@@ -67,7 +68,10 @@ router.push(`/pequenos-animales/pacientes/${pacienteId}`);
 }
   return (
     <main className="min-h-screen bg-[#F4F1EB] p-6">
-
+<PequenosHeader
+  titulo="Pequeños animales"
+  subtitulo="Sistema de historia clínica"
+/>
       <h1 className="text-5xl font-bold text-[#0B6A74] mb-2">
         🩺 Nuevo Diagnóstico
       </h1>

@@ -4,6 +4,10 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import PequenosHeader from "@/app/components/PequenosHeader";
+import { useEffect } from "react";
+
+
 
 export default function HistoriaClinica() {
   const params = useParams();
@@ -14,7 +18,21 @@ export default function HistoriaClinica() {
   const [anamnesis, setAnamnesis] = useState("");
   const [examenFisico, setExamenFisico] = useState("");
   const [observaciones, setObservaciones] = useState("");
+const [paciente, setPaciente] = useState<any>(null);
 
+useEffect(() => {
+  const fetchPaciente = async () => {
+    const { data } = await supabase
+      .from("Pacientes")
+      .select("*")
+      .eq("id", pacienteId)
+      .maybeSingle();
+
+    setPaciente(data);
+  };
+
+  fetchPaciente();
+}, [pacienteId]);
   async function guardarHistoria() {
     const { error } = await supabase
       .from("HistoriasClinicas")
@@ -41,15 +59,12 @@ router.push(`/pequenos-animales/pacientes/${pacienteId}`);
 
   return (
     <main className="min-h-screen bg-[#F4F1EB] p-6">
-
-      <h1 className="text-5xl font-bold text-[#0B6A74] mb-2">
-        📋 Historia Clínica
-      </h1>
-
-      <p className="text-[#6B7280] mb-8">
-        Primera consulta del paciente
-      </p>
-
+ <div className="mb-8">
+<PequenosHeader
+  titulo={paciente?.Nombre ?? "Paciente"}
+  subtitulo="Historia clínica"
+/>
+</div>
       <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl p-8">
 
         <div className="grid gap-5">

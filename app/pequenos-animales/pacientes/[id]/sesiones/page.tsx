@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-
+import PequenosHeader from "@/app/components/PequenosHeader";
 export default async function DetalleSesion({
   params,
 }: {
@@ -8,8 +8,7 @@ export default async function DetalleSesion({
     sesionId: string;
   }>;
 }) {
-  const { sesionId } = await params;
-
+  const { id, sesionId } = await params;
   const { data: sesion } = await supabase
     .from("Sesiones")
     .select("*")
@@ -33,6 +32,12 @@ export default async function DetalleSesion({
     .from("Parámetros terapias")
     .select("*");
 
+    const { data: paciente } = await supabase
+  .from("Pacientes")
+  .select("*")
+  .eq("id", id)
+  .maybeSingle();
+
   function evolucionTexto(valor: string) {
     switch (valor) {
       case "1":
@@ -52,6 +57,10 @@ export default async function DetalleSesion({
 
   return (
     <main className="min-h-screen bg-[#F4F1EB] p-6">
+      <PequenosHeader
+        titulo={paciente?.Nombre ?? "Paciente"}
+        subtitulo="Ficha clínica"
+      />  
       <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow-xl p-8">
 
         <h1 className="text-4xl font-bold text-[#0B6A74] mb-6">
