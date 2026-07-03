@@ -41,31 +41,26 @@ export default function Home() {
             </div>
 
           </div>
-        </Link>
+          </Link>
+       <Link href="/pequenos-animales">
+  <div className="bg-white rounded-3xl overflow-hidden shadow-md md:shadow-lg hover:shadow-xl md:hover:shadow-2xl transition-all cursor-pointer mx-2">
 
-        <div className="bg-white rounded-3xl overflow-hidden shadow-lg opacity-80 mx-2">
+    <Image
+      src="/perro-gato.webp"
+      alt="Pequeños animales"
+      width={800}
+      height={400}
+      className="w-full h-52 md:h-64 object-cover"
+    />
 
-          <Image
-            src="/perro-gato.webp"
-            alt="Pequeños animales"
-            width={800}
-            height={400}
-           className="w-full h-52 md:h-64 object-cover"
-          />
+    <div className="p-5 md:p-6 text-center">
+      <h2 className="text-2xl md:text-3xl font-bold text-[#0B6A74]">
+        Pequeños animales
+      </h2>
+    </div>
 
-         <div className="p-5 md:p-6 text-center">
-
-            <h2 className="text-2xl md:text-3xl font-bold text-[#0B6A74]">
-              Pequeños animales
-            </h2>
-
-            <p className="text-gray-500 mt-2">
-              Próximamente
-            </p>
-
-          </div>
-
-        </div>
+  </div>
+</Link>
 
       </div>
 

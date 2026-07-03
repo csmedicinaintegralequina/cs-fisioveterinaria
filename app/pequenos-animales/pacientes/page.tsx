@@ -12,10 +12,10 @@ export default function Pacientes() {
   }, []);
 
   async function cargarPacientes() {
-    const { data, error } = await supabase
+   const { data, error } = await supabase
   .from("Pacientes")
   .select("*")
-  .eq("Especie", "Equino")
+  .in("Especie", ["Canino", "Felino"])
   .order("Nombre");
 
     if (error) {
@@ -65,10 +65,16 @@ export default function Pacientes() {
         <div className="flex flex-col gap-4">
 
          {pacientesFiltrados.map((paciente) => {
+  const icono =
+  paciente.Especie === "Canino"
+    ? "🐶"
+    : paciente.Especie === "Felino"
+    ? "🐱"
+    : "🐾";
   return (
     <Link
       key={paciente.id}
-      href={`/equinos/pacientes/${paciente.id}`}
+      href={`/pequenos-animales/pacientes/${paciente.id}`}
     >
       <div
         className="
@@ -82,9 +88,9 @@ export default function Pacientes() {
           cursor-pointer
         "
       >
-        <h2 className="text-2xl font-bold text-[#0B6A74]">
-          🐴 {paciente.Nombre}
-        </h2>
+       <h2 className="text-2xl font-bold text-[#45B8AC]">
+  {icono} {paciente.Nombre}
+</h2>
 
         <p className="text-gray-600 mt-2">
           {paciente.Raza}
