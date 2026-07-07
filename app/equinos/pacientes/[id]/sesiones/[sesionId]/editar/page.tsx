@@ -1,16 +1,16 @@
 "use client";
 import { useEffect } from "react";
 import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import EquinosHeader from "@/app/components/EquinosHeader";
+import TerapiaCard from "@/app/components/TerapiaCard";
 
 export default function NuevaSesion() {
-const params = useParams();
-
-const pacienteId = params.id as string;
+  const params = useParams();
+const router = useRouter();
+  const pacienteId = params.id as string;
 const sesionId = params.sesionId as string;
-
 const [fechaSesion, setFechaSesion] = useState("");
   const [veterinario, setVeterinario] = useState("");
   const [lugar, setLugar] = useState("");
@@ -18,29 +18,48 @@ const [fechaSesion, setFechaSesion] = useState("");
   const [observaciones, setObservaciones] = useState("");
   const [lugares, setLugares] = useState<any[]>([]);
   const [terapias, setTerapias] = useState<any[]>([]);
-const [terapiasSeleccionadas, setTerapiasSeleccionadas] = useState<string[]>([]);
-const [parametros, setParametros] = useState<any[]>([]);
+  const [parametros, setParametros] = useState<any[]>([]);
 const [opcionesParametros, setOpcionesParametros] = useState<any[]>([]);
-const [valoresParametros, setValoresParametros] = useState<any>({});
+type TerapiaSel = {
+  terapiaId: string;
+  aplicaciones: any[];
+};
+
+const [terapiasSeleccionadas, setTerapiasSeleccionadas] =
+useState<TerapiaSel[]>([]);
 const [estructuras, setEstructuras] = useState<any[]>([]);
-const [estructuraPorTerapia, setEstructuraPorTerapia] = useState<Record<string, string>>({});
+const [valoresParametros, setValoresParametros] = useState<Record<string, string>>({});
+const [parametrosCargados, setParametrosCargados] =
+useState<Record<string, string>>({});
+const [parametrosPorTerapia, setParametrosPorTerapia] =
+useState<Record<string, any>>({});
+const [estructuraPorTerapia, setEstructuraPorTerapia] =
+useState<Record<string, string[]>>({});
 useEffect(() => {
+
+  if (!sesionId) return;
+
   cargarLugares();
   cargarTerapias();
-  cargarParametros();
   cargarEstructuras();
+  cargarParametros();
   cargarOpcionesParametros();
   cargarSesion();
   cargarTerapiasSesion();
-  cargarParametrosSesion();
-}, []);
+
+}, [sesionId]);
 async function cargarSesion() {
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("Sesiones")
     .select("*")
     .eq("id", sesionId)
     .single();
+
+  if (error) {
+    console.log("ERROR CARGANDO SESION:", error);
+    return;
+  }
 
   if (!data) return;
 
@@ -60,60 +79,60 @@ async function cargarTerapiasSesion() {
 
   if (!data) return;
 
-  setTerapiasSeleccionadas(
-    data.map((t) => t["Terapia id"])
-  );
+  console.log("TERAPIAS GUARDADAS:", data);
 
-  const estructuras: Record<string, string> = {};
+  const agrupadas: any = {};
 
   data.forEach((t) => {
-    estructuras[t["Terapia id"]] =
-      t["Región anatómica"] || "";
+
+    if (!agrupadas[t["Terapia id"]]) {
+      agrupadas[t["Terapia id"]] = {
+        terapiaId: t["Terapia id"],
+        aplicaciones: [],
+      };
+    }
+
+    agrupadas[t["Terapia id"]].aplicaciones.push({
+      estructuras: t["Región anatómica"]
+        ? [t["Región anatómica"]]
+        : [],
+      parametros: {},
+      observaciones: "",
+    });
+
   });
 
-  setEstructuraPorTerapia(estructuras);
-}
-async function cargarParametrosSesion() {
 
-  const { data: terapiasSesion } = await supabase
-    .from("Sesión terapias")
-    .select("*")
-    .eq("Sesión id", sesionId);
+  const terapiasCargadas = Object.values(agrupadas);
 
-  if (!terapiasSesion) return;
+setTerapiasSeleccionadas(
+  terapiasCargadas
+);
 
-  const idsTerapiasSesion =
-    terapiasSesion.map((t) => t.id);
+console.log(
+  "TERAPIAS BASE:",
+  terapiasCargadas
+);
 
-  const { data: parametrosSesion } =
-    await supabase
-      .from("Sesión parámetros")
-      .select("*")
-      .in(
-        "Sesión terapia id",
-        idsTerapiasSesion
-      );
-
-  if (!parametrosSesion) return;
-
-  const valores: any = {};
-
-  parametrosSesion.forEach((p) => {
-    valores[p["Parámetro id"]] =
-      p["Valor seleccionado"];
-  });
-
-  setValoresParametros(valores);
+setTimeout(() => {
+  cargarParametrosSesion(terapiasCargadas);
+}, 500);
+  console.log(
+    "TERAPIAS CARGADAS:",
+    Object.values(agrupadas)
+  );
 }
 async function cargarLugares() {
+
   const { data, error } = await supabase
     .from("Lugares")
     .select("*");
 
   console.log("LUGARES:", data);
-  console.log("ERROR:", error);
+  console.log("ERROR LUGARES:", error);
 
   setLugares(data || []);
+
 }
 async function cargarTerapias() {
   const { data, error } = await supabase
@@ -124,8 +143,9 @@ async function cargarTerapias() {
   console.log("ERROR TERAPIAS:", error);
 
   if (data) {
-    setTerapias(data);
-  }
+  console.log("LISTA TERAPIAS:", data);
+  setTerapias(data);
+}
 }
 async function cargarEstructuras() {
   const { data, error } = await supabase
@@ -143,122 +163,200 @@ async function cargarParametros() {
     .from("Parámetros terapias")
     .select("*");
 
-  if (data) {
-    setParametros(data);
-  }
+  setParametros(data || []);
 }
+
 async function cargarOpcionesParametros() {
   const { data } = await supabase
     .from("Opciones parámetros")
     .select("*");
 
-  if (data) {
-    setOpcionesParametros(data);
-  }
+  setOpcionesParametros(data || []);
 }
-async function actualizarSesion(){
+async function cargarParametrosSesion(terapiasActuales:any[]) {
+
+  const { data: terapiasSesion } = await supabase
+    .from("Sesión terapias")
+    .select("*")
+    .eq("Sesión id", sesionId);
+
+  if (!terapiasSesion) return;
+
+
+  const ids = terapiasSesion.map(
+    (t) => t.id
+  );
+
+
+  const { data: parametrosSesion } =
+    await supabase
+      .from("Sesión parámetros")
+      .select("*")
+      .in(
+        "Sesión terapia id",
+        ids
+      );
+
+
+  if (!parametrosSesion) return;
+
+
+  const nuevasTerapias = terapiasActuales.map(
+    (terapia) => {
+
+      const aplicaciones = terapia.aplicaciones.map(
+        (app, indice) => {
+
+          const terapiaSesion =
+            terapiasSesion.find(
+              (ts) =>
+                ts["Terapia id"] === terapia.terapiaId &&
+                indice === 0
+            );
+
+
+          const parametros: Record<string,string> = {};
+
+
+          parametrosSesion
+            .filter(
+              (p) =>
+                p["Sesión terapia id"] === terapiaSesion?.id
+            )
+            .forEach(
+              (p) => {
+                parametros[p["Parámetro id"]] =
+                  p["Valor seleccionado"];
+              }
+            );
+
+
+          return {
+            ...app,
+            parametros,
+          };
+
+        }
+      );
+
+
+      return {
+        ...terapia,
+        aplicaciones,
+      };
+
+    }
+  );
+
+
+  setTerapiasSeleccionadas(nuevasTerapias);
+
+
+  console.log(
+    "TERAPIAS CON PARAMETROS:",
+    nuevasTerapias
+  );
+
+}
+async function guardarSesion() {
   console.log("BOTON FUNCIONA");
 
-const { error } = await supabase
-  .from("Sesiones")
-  .update({
-    "Fecha de sesión": fechaSesion,
-    "Veterinario actuante": veterinario,
-    "Lugar de atención": lugar,
-    Evolución: evolucion,
-    Observaciones: observaciones,
-  })
-  .eq("id", sesionId);
+const { data: sesionCreada, error } =
+  await supabase
+    .from("Sesiones")
+    .insert([
+      {
+        "Paciente id": pacienteId,
+        "Fecha de sesión": fechaSesion,
+        "Veterinario actuante": veterinario,
+        "Lugar de atención": lugar,
+        Evolución: evolucion,
+        Observaciones: observaciones,
+      },
+    ])
+    .select()
+    .single();
 
 if (error) {
   console.log("ERROR COMPLETO:", error);
 
   return;
 }
-const { data: terapiasViejas } = await supabase
-  .from("Sesión terapias")
-  .select("id")
-  .eq("Sesión id", sesionId);
+console.log("SESION CREADA:", sesionCreada);
+for (const item of terapiasSeleccionadas) {
 
-if (terapiasViejas?.length) {
+  for (const aplicacion of item.aplicaciones) {
 
-  const idsTerapiasViejas =
-    terapiasViejas.map((t) => t.id);
+    const { data: terapiaCreada, error: errorTerapia } =
+      await supabase
+        .from("Sesión terapias")
+        .insert([
+          {
+            "Sesión id": sesionCreada.id,
+            "Terapia id": item.terapiaId,
+            "Región anatómica":
+              aplicacion.estructuras.join(", "),
+            Observaciones:
+              aplicacion.observaciones,
+          },
+        ])
+        .select()
+        .single();
 
-  await supabase
-    .from("Sesión parámetros")
-    .delete()
-    .in(
-      "Sesión terapia id",
-      idsTerapiasViejas
-    );
+    if (errorTerapia) {
+      console.log(
+        "ERROR GUARDANDO TERAPIA:",
+        errorTerapia
+      );
+      continue;
+    }
 
-  await supabase
-    .from("Sesión terapias")
-    .delete()
-    .eq("Sesión id", sesionId);
-}
-for (const terapiaId of terapiasSeleccionadas) {
+    for (const parametroId in aplicacion.parametros) {
 
-  const { data: terapiaCreada, error: errorTerapia } =
-    await supabase
-      .from("Sesión terapias")
-      .insert([
-        {
-          "Sesión id": sesionId,
-          "Terapia id": terapiaId,
-          "Región anatómica":
-            estructuraPorTerapia[terapiaId] || null,
-        },
-      ])
-      .select()
-      .single();
+      const { error: errorParametro } =
+        await supabase
+          .from("Sesión parámetros")
+          .insert([
+            {
+              "Sesión terapia id":
+                terapiaCreada.id,
 
-  if (errorTerapia || !terapiaCreada) {
-  continue;
-}
+              "Parámetro id":
+                parametroId,
 
-const parametrosDeEstaTerapia =
-  parametros.filter(
-    (p) => p["Terapia id"] === terapiaId
-  );
+              "Valor seleccionado":
+                aplicacion.parametros[parametroId],
+            },
+          ]);
 
-for (const parametro of parametrosDeEstaTerapia) {
+      if (errorParametro) {
+        console.log(
+          "ERROR PARAMETRO:",
+          errorParametro
+        );
+      }
 
-  const valorSeleccionado =
-    valoresParametros[parametro.id];
+    }
 
-  if (!valorSeleccionado) continue;
-
-  await supabase
-    .from("Sesión parámetros")
-    .insert([
-      {
-        "Sesión terapia id":
-          terapiaCreada.id,
-
-        "Parámetro id":
-          parametro.id,
-
-        "Valor seleccionado":
-          valorSeleccionado,
-      },
-    ]);
-}
+  }
 
 }
 
-alert("Sesión actualizada");
-}
+console.log("PARAMETROS:", terapiasSeleccionadas);
+
+router.push(`/equinos/pacientes/${pacienteId}`);
+  }
+  console.log(
+  "ESTADO ANTES DE MOSTRAR:",
+  terapiasSeleccionadas
+);
     return (
     <main className="min-h-screen bg-[#F4F1EB] p-6">
 
-      <EquinosHeader
-  titulo="Editar Sesión"
-  subtitulo="Modificar sesión terapéutica"
+<EquinosHeader
+  titulo="Nueva Sesión"
+  subtitulo="Registrar sesión terapéutica"
 />
-
-<div className="mb-8" />
 
       <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl p-8">
 
@@ -369,127 +467,86 @@ alert("Sesión actualizada");
     Terapias realizadas
   </p>
 
-  <div className="grid gap-2">
+ <div className="grid gap-2">
 
-    {terapias.map((terapia) => (
+  {terapias.map((terapia) => {
 
-      <label
-        key={terapia.id}
-        className="flex items-center gap-3"
-      >
-{terapiasSeleccionadas.includes(terapia.id) && (
+    const seleccionada = terapiasSeleccionadas.some(
+      (t) => t.terapiaId === terapia.id
+    );
 
-  <div className="ml-8 mt-2 mb-4 bg-gray-50 p-4 rounded-xl">
-<div className="mb-4">
+    return (
+      <div key={terapia.id} className="w-full">
 
-  <p className="font-medium">
-    Estructura anatómica
-  </p>
+        <label className="flex items-center gap-3">
 
-  <select
-    value={estructuraPorTerapia[terapia.id] || ""}
-    onChange={(e) =>
-      setEstructuraPorTerapia({
-        ...estructuraPorTerapia,
-        [terapia.id]: e.target.value,
-      })
-    }
-    className="w-full mt-1 p-2 border rounded-xl"
-  >
-    <option value="">
-      Seleccionar estructura
-    </option>
+          <input
+            type="checkbox"
+            checked={seleccionada}
+            onChange={(e) => {
 
-    {estructuras.map((estructura) => (
-      <option
-        key={estructura.id}
-        value={estructura.Nombre}
-      >
-        {estructura.Nombre}
-      </option>
-    ))}
-  </select>
+              if (e.target.checked) {
 
-</div>
-    {parametros
-      .filter(
-        (p) => p["Terapia id"] === terapia.id
-      )
-      .map((parametro) => (
+                setTerapiasSeleccionadas((prev) => [
+                  ...prev.filter((t) => t.terapiaId !== terapia.id),
+                  {
+                    terapiaId: terapia.id,
+                    aplicaciones: [
+                      {
+                        estructuras: [],
+                        parametros: {},
+                        observaciones: "",
+                      },
+                    ],
+                  },
+                ]);
 
-        <div
-          key={parametro.id}
-          className="mb-3"
-        >
+              } else {
 
-          <p className="font-medium">
-            {parametro["Nombre parámetro"]}
-          </p>
+                setTerapiasSeleccionadas((prev) =>
+                  prev.filter((t) => t.terapiaId !== terapia.id)
+                );
 
-        <select
-  value={valoresParametros[parametro.id] || ""}
-  onChange={(e) =>
-    setValoresParametros({
-      ...valoresParametros,
-      [parametro.id]: e.target.value,
-    })
+              }
+            }}
+          />
+
+          {terapia.Nombre}
+
+        </label>
+
+        {seleccionada && (
+          <div className="ml-8 w-full"> 
+            <TerapiaCard
+  terapia={terapia}
+  estructuras={estructuras}
+  parametros={parametros}
+  opcionesParametros={opcionesParametros}
+  aplicaciones={
+    terapiasSeleccionadas.find(
+      (t) => t.terapiaId === terapia.id
+    )?.aplicaciones || []
   }
-  className="w-full mt-1 p-2 border rounded-xl"
->
-  <option value="">
-    Seleccionar
-  </option>
-
-  {opcionesParametros
-    .filter(
-      (opcion) =>
-        opcion["Parámetro id"] === parametro.id
-    )
-    .map((opcion) => (
-      <option
-        key={opcion.id}
-        value={opcion.Valor}
-      >
-        {opcion.Valor}
-      </option>
-    ))}
-</select>
-
-        </div>
-
-      ))}
-
-  </div>
-
-)}
-        <input
-          type="checkbox"
-          checked={terapiasSeleccionadas.includes(terapia.id)}
-          onChange={(e) => {
-
-            if (e.target.checked) {
-              setTerapiasSeleccionadas([
-                ...terapiasSeleccionadas,
-                terapia.id,
-              ]);
-            } else {
-              setTerapiasSeleccionadas(
-                terapiasSeleccionadas.filter(
-                  (id) => id !== terapia.id
-                )
-              );
+  onChange={(apps) =>
+    setTerapiasSeleccionadas((prev) =>
+      prev.map((t) =>
+        t.terapiaId === terapia.id
+          ? {
+              ...t,
+              aplicaciones: apps,
             }
-          }}
-        />
+          : t
+      )
+    )
+  }
+/>
+          </div>
+        )}
 
-        {terapia.Nombre}
-
-      </label>
-
-    ))}
-
+      </div>
+    );
+  })}
   </div>
-
 </div>
           <textarea
             rows={5}
@@ -499,7 +556,7 @@ alert("Sesión actualizada");
             className="p-4 rounded-2xl border border-gray-300"
           />
                     <button
-            onClick={actualizarSesion}
+            onClick={guardarSesion}
             className="
               bg-[#0B6A74]
               text-white
