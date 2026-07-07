@@ -447,49 +447,106 @@ py-3 md:py-4
 </div>
 <div className="mt-3 text-sm">
 
-  {sesionesTerapias
-    ?.filter(
-      (st) => st["Sesión id"] === sesion.id
-    )
-    .map((st) => {
+  {(() => {
 
-      const terapia = terapias?.find(
-        (t) => t.id === st["Terapia id"]
-      );
+    const terapiasDeLaSesion =
+      sesionesTerapias?.filter(
+        (st) => st["Sesión id"] === sesion.id
+      ) || [];
 
-      const parametrosDeLaTerapia =
-        sesionesParametros?.filter(
-          (sp) =>
-            sp["Sesión terapia id"] === st.id
+    const terapiasAgrupadas = terapiasDeLaSesion.reduce(
+      (acc: any, st: any) => {
+
+        const terapiaId = st["Terapia id"];
+
+        if (!acc[terapiaId]) {
+          acc[terapiaId] = [];
+        }
+
+        acc[terapiaId].push(st);
+
+        return acc;
+
+      },
+      {}
+    );
+
+    return Object.entries(terapiasAgrupadas).map(
+      ([terapiaId, aplicaciones]: any) => {
+
+        const terapia = terapias?.find(
+          (t) => t.id === terapiaId
         );
 
-      return (
-        <div
-          key={st.id}
-          className="mb-3"
-        >
+        return (
 
-          <div className="font-semibold">
-            {terapia?.Nombre}
-          </div>
+          <div
+            key={terapiaId}
+            className="mb-4"
+          >
 
-          {st["Región anatómica"] && (
-            <div className="text-gray-600 text-xs">
-              📍 {st["Región anatómica"]}
+            <div className="font-semibold text-[#0B6A74]">
+              {terapia?.Nombre}
             </div>
-          )}
 
-          <div className="text-xs text-gray-500">
+            {aplicaciones.map(
+              (st: any, indice: number) => {
 
-            {parametrosDeLaTerapia
-              ?.map((sp) => sp["Valor seleccionado"])
-              .join(" • ")}
+                const parametrosDeLaAplicacion =
+                  sesionesParametros?.filter(
+                    (sp) =>
+                      sp["Sesión terapia id"] === st.id
+                  );
+
+                return (
+
+                  <div
+                    key={st.id}
+                    className="ml-4 mt-2 border-l-2 border-gray-200 pl-3"
+                  >
+
+                    <div className="text-xs font-semibold text-gray-500">
+                      Aplicación {indice + 1}
+                    </div>
+
+                    {st["Región anatómica"] && (
+                      <div className="text-gray-600 text-xs">
+                        📍 {st["Región anatómica"]}
+                      </div>
+                    )}
+
+                    <div className="text-xs text-gray-500">
+
+                      {parametrosDeLaAplicacion
+                        ?.map(
+                          (sp: any) =>
+                            sp["Valor seleccionado"]
+                        )
+                        .join(" • ")}
+
+                    </div>
+
+                    {st.Observaciones && (
+                      <div className="text-xs italic text-gray-500 mt-1">
+                        📝 {st.Observaciones}
+                      </div>
+                    )}
+
+                  </div>
+
+                );
+
+              }
+            )}
 
           </div>
 
-        </div>
-      );
-    })}
+        );
+
+      }
+    );
+
+  })()}
 
 </div>
 <div className="text-xs text-gray-500 mt-2">
