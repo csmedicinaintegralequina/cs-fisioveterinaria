@@ -1,11 +1,21 @@
 "use client";
-
+import { Suspense } from "react";
 import { useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import EquinosHeader from "@/app/components/EquinosHeader";
 
 export default function NuevaOpcion() {
+  return (
+    <Suspense fallback={<div>Cargando...</div>}>
+      <NuevaOpcionContenido />
+    </Suspense>
+  );
+}
+
+
+function NuevaOpcionContenido() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
