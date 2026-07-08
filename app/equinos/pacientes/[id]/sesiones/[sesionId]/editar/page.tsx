@@ -103,7 +103,8 @@ async function cargarTerapiasSesion() {
   });
 
 
-  const terapiasCargadas = Object.values(agrupadas);
+  const terapiasCargadas =
+  Object.values(agrupadas) as TerapiaSel[];
 
 setTerapiasSeleccionadas(
   terapiasCargadas
@@ -173,7 +174,9 @@ async function cargarOpcionesParametros() {
 
   setOpcionesParametros(data || []);
 }
-async function cargarParametrosSesion(terapiasActuales:any[]) {
+async function cargarParametrosSesion(
+  terapiasActuales: TerapiaSel[]
+) {
 
   const { data: terapiasSesion } = await supabase
     .from("Sesión terapias")

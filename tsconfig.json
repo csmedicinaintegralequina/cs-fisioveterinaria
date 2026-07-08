@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "app/equinos/pacientes/[id]/sesiones/[sesionId]/editar/page vieja"  ],
   "exclude": ["node_modules"]
 }
