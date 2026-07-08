@@ -63,7 +63,39 @@ export default function Home() {
 </Link>
 
       </div>
+<div className="w-full max-w-2xl mt-8 px-2">
 
+  <Link href="/administracion">
+    <div
+      className="
+        bg-[#4B5563]
+        text-white
+        rounded-3xl
+        p-6
+        shadow-md
+        hover:shadow-xl
+        hover:scale-[1.02]
+        transition-all
+        cursor-pointer
+        text-center
+      "
+    >
+      <div className="text-4xl mb-2">
+        ⚙️
+      </div>
+
+      <h2 className="text-2xl font-bold">
+        Administración
+      </h2>
+
+      <p className="text-sm mt-1">
+        Configuración del sistema
+      </p>
+
+    </div>
+  </Link>
+
+</div>
     </main>
   );
 }

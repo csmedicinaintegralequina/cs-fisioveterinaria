@@ -35,7 +35,74 @@ export default function TerapiaCard({
           <h3 className="text-lg font-bold text-[#0B6A74]">
             Aplicación {indice + 1}
           </h3>
+{/* OZONOTERAPIA SISTÉMICA */}
 
+{terapia.Nombre === "Ozonoterapia sistémica" && (
+
+  <div className="grid gap-4 mt-4">
+
+    <div>
+
+      <p className="font-medium">Peso (kg)</p>
+
+      <input
+        type="number"
+        className="w-full mt-2 p-3 border rounded-xl"
+      />
+
+    </div>
+
+    <div>
+
+      <p className="font-medium">
+        Volumen (ml)
+      </p>
+
+      <input
+        type="number"
+        className="w-full mt-2 p-3 border rounded-xl"
+      />
+
+    </div>
+
+  </div>
+
+)}
+{/* OZONOTERAPIA LOCAL */}
+
+{terapia.Nombre === "Ozonoterapia Local" && (
+
+  <div className="grid gap-4 mt-4">
+
+    <div>
+
+      <p className="font-medium">
+        Volumen (ml)
+      </p>
+
+      <input
+        type="number"
+        className="w-full mt-2 p-3 border rounded-xl"
+      />
+
+    </div>
+
+    <div>
+
+      <p className="font-medium">
+        Puntos
+      </p>
+
+      <input
+        type="number"
+        className="w-full mt-2 p-3 border rounded-xl"
+      />
+
+    </div>
+
+  </div>
+
+)}
           <p className="mt-4 font-semibold">
             Estructuras anatómicas
           </p>

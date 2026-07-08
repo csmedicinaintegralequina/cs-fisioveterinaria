@@ -1,0 +1,207 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import EquinosHeader from "@/app/components/EquinosHeader";
+
+export default function Estructuras() {
+
+  const [parametros, setParametros] = useState<any[]>([]);
+  const [terapias, setTerapias] = useState<any[]>([]);
+const [opciones, setOpciones] = useState<any[]>([]);
+const [abiertos, setAbiertos] = useState<Record<string, boolean>>({});
+  useEffect(() => {
+  cargarParametros();
+}, []);
+
+ async function cargarParametros() {
+
+  const { data: terapiasData } = await supabase
+    .from("Terapias")
+    .select("*");
+
+  if (terapiasData) {
+    setTerapias(terapiasData);
+  }
+
+  const { data } = await supabase
+    .from("Parámetros terapias")
+    .select("*")
+    .order("Nombre parámetro");
+
+  if (!data) return;
+
+  const parametrosConOpciones = [];
+
+  for (const parametro of data) {
+
+    const { data: opcionesData } = await supabase
+      .from("Opciones parámetros")
+      .select("*")
+      .eq("Parámetro id", parametro.id);
+
+    parametrosConOpciones.push({
+      ...parametro,
+      opciones: opcionesData || [],
+    });
+
+  }
+
+  setParametros(parametrosConOpciones);
+
+}
+
+const terapiasOrdenadas = terapias.map((terapia) => ({
+  ...terapia,
+  parametros: parametros.filter(
+    (p) => p["Terapia id"] === terapia.id
+  ),
+}));
+  return (
+
+    <main className="min-h-screen bg-[#F4F1EB] p-6">
+
+      <EquinosHeader
+        titulo="Parámetros"
+        subtitulo="Administración"
+      />
+
+      <div className="max-w-4xl mx-auto mt-8">
+
+        <Link
+          href="/administracion/parametros/nueva-opcion"
+          className="
+            inline-block
+            bg-[#0B6A74]
+            text-white
+            px-6
+            py-4
+            rounded-2xl
+            font-bold
+            shadow-lg
+            hover:scale-105
+            transition-all
+            mb-8
+          "
+        >
+          ➕ Nuevo parámetro
+        </Link>
+
+        <div className="space-y-3">
+
+{terapiasOrdenadas.map((terapia) => (
+
+  terapia.parametros.length > 0 && (
+
+    <div key={terapia.id} className="mb-8">
+
+      <h2 className="text-2xl font-bold text-[#0B6A74] mb-4">
+        {terapia.Nombre}
+      </h2>
+
+      <div className="space-y-3">
+
+        {terapia.parametros.map((parametro: any) => (
+
+  <div
+    key={parametro.id}
+    className="
+      bg-white
+      rounded-2xl
+      shadow
+      p-5
+      mb-3
+    "
+  >
+
+    <div className="flex justify-between items-start">
+
+      <div className="flex-1">
+
+        <p className="font-semibold">
+          {parametro["Nombre parámetro"]}
+        </p>
+
+        <div className="ml-4 mt-2 space-y-1">
+
+          {parametro.opciones?.map((opcion: any) => (
+
+            <div
+  key={opcion.id}
+  className="flex items-center gap-2"
+>
+
+              <span className="text-sm text-gray-600">
+                • {opcion.Valor}
+              </span>
+
+              <a
+                href={`/administracion/parametros/${opcion.id}/eliminar`}
+                className="text-red-600 text-xs"
+              >
+                🗑
+              </a>
+
+            </div>
+
+          ))}
+
+        </div>
+
+        <a
+          href={`/administracion/parametros/nueva-opcion?parametro=${parametro.id}`}
+          className="
+            mt-2
+            inline-block
+            text-xs
+            font-semibold
+            text-[#0B6A74]
+          "
+        >
+          ➕ Agregar opción
+        </a>
+
+      </div>
+
+      <div className="flex gap-4 ml-6">
+
+        <a
+          href={`/administracion/parametros/${parametro.id}/editar`}
+          className="text-xl"
+        >
+          ✏️
+        </a>
+
+        <a
+          href={`/administracion/parametros/${parametro.id}/eliminar`}
+          className="text-xl"
+        >
+          🗑️
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+))}
+
+      </div>
+
+    </div>
+
+  )
+
+))}
+
+        </div>
+
+      </div>
+
+    </main>
+
+  );
+
+}
