@@ -174,7 +174,7 @@ className="
   </h2>
 
   <a
-    href={`/pequenos-animales/pacientes/${paciente.id}/editar`}
+    href={`/pequenos-animales/pacientes/${paciente.id}/editar-paciente`}
 className="
   text-sm
   font-semibold

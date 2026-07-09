@@ -31,7 +31,30 @@ const [nombrePropietarioSeleccionado, setNombrePropietarioSeleccionado] = useSta
 
   const [fechaNacimiento, setFechaNacimiento] = useState("");
   const [edad, setEdad] = useState("");
+useEffect(() => {
 
+  if (fechaNacimiento) {
+
+    const nacimiento = new Date(fechaNacimiento);
+    const hoy = new Date();
+
+    let años = hoy.getFullYear() - nacimiento.getFullYear();
+
+    const mes =
+      hoy.getMonth() - nacimiento.getMonth();
+
+    if (
+      mes < 0 ||
+      (mes === 0 &&
+        hoy.getDate() < nacimiento.getDate())
+    ) {
+      años--;
+    }
+
+    setEdad(String(años));
+  }
+
+}, [fechaNacimiento]);
   const [peso, setPeso] = useState("");
 
   const [color, setColor] = useState("");
@@ -53,14 +76,14 @@ const [nombrePropietarioSeleccionado, setNombrePropietarioSeleccionado] = useSta
 
   useEffect(() => {
 
-    cargarPropietarios();
-    cargarLugares();
+  cargarPropietarios();
+  cargarLugares();
 
-    if (modo === "editar" && pacienteId) {
-      cargarPaciente();
-    }
+  if (modo === "editar" && pacienteId) {
+    cargarPaciente();
+  }
 
-  }, []);
+}, [modo, pacienteId]);
 
   async function cargarPropietarios() {
 
@@ -200,8 +223,7 @@ if (especie === "Equino") {
 } else {
   router.push(`/pequenos-animales/pacientes/${data.id}`);
 }
-
-  } else {
+} else {
 
     const { error } =
       await supabase
@@ -216,8 +238,13 @@ if (especie === "Equino") {
 
     alert("Paciente actualizado");
 
-  }
+    if (especie === "Equino") {
+      router.push(`/equinos/pacientes/${pacienteId}`);
+    } else {
+      router.push(`/pequenos-animales/pacientes/${pacienteId}`);
+    }
 
+}
 }
   return (
 

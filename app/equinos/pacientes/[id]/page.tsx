@@ -130,7 +130,7 @@ function formatearFecha(fecha: string) {
   </h2>
 
   <a
-    href={`/equinos/propietarios/${propietario.id}/editar`}
+    href={`/equinos/propietarios/${propietario.id}/editar-propietario`}
 className="
   text-sm
   font-semibold
@@ -170,7 +170,7 @@ className="
   </h2>
 
   <a
-    href={`/equinos/pacientes/${paciente.id}/editar`}
+    href={`/equinos/pacientes/${paciente.id}/editar-paciente`}
 className="
   text-sm
   font-semibold
@@ -183,28 +183,56 @@ className="
     ✏️ Editar
   </a>
 </div>
-        <div className="grid gap-4">
-          <div>
-            <strong>Especie:</strong> {paciente.Especie}
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-          <div>
-            <strong>Raza:</strong> {paciente.Raza}
-          </div>
+  <div>
+    <strong>Especie:</strong> {paciente.Especie}
+  </div>
 
-          <div>
-            <strong>Sexo:</strong> {paciente.Sexo}
-          </div>
+  <div>
+    <strong>Raza:</strong> {paciente.Raza}
+  </div>
 
-          <div>
-            <strong>Color / Pelaje:</strong> {paciente.Color}
-          </div>
+  <div>
+    <strong>Sexo:</strong> {paciente.Sexo}
+  </div>
 
-          <div>
-            <strong>Fecha nacimiento:</strong>{" "}
-            {paciente["Fecha Nacimiento"]}
-          </div>
-        </div>
+  <div>
+    <strong>Castrado:</strong>{" "}
+    {paciente.Castrado ? "Sí" : "No"}
+  </div>
+
+  <div>
+    <strong>Edad:</strong>{" "}
+    {paciente.Edad || "-"}
+  </div>
+
+  <div>
+    <strong>Fecha nacimiento:</strong>{" "}
+    {paciente["Fecha Nacimiento"] || "-"}
+  </div>
+
+  <div>
+    <strong>Peso:</strong>{" "}
+    {paciente.Peso ? `${paciente.Peso} kg` : "-"}
+  </div>
+
+  <div>
+    <strong>Color / Pelaje:</strong>{" "}
+    {paciente.Color || "-"}
+  </div>
+
+  <div>
+    <strong>Estado:</strong>{" "}
+    {paciente.Estado || "-"}
+  </div>
+
+  <div>
+    <strong>Tipo tratamiento:</strong>{" "}
+    {paciente["Tipo tratamiento"] || "-"}
+  </div>
+
+</div>
       </div>
          
    <div className="max-w-4xl mx-auto mt-6 bg-white rounded-3xl shadow-xl p-6 md:p-8">
