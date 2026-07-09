@@ -15,6 +15,7 @@ export default function NuevoPaciente() {
   const [sexo, setSexo] = useState("Macho");
   const [fechaNacimiento, setFechaNacimiento] = useState("");
   const [color, setColor] = useState("");
+  const [peso, setPeso] = useState("");
 
   useEffect(() => {
   cargarPropietarios();
@@ -45,6 +46,7 @@ export default function NuevoPaciente() {
           Color: color,
           "Fecha Nacimiento": fechaNacimiento || null,
           "propietario id": propietarioId,
+           Peso: peso || null,
         },
       ]);
 
@@ -132,6 +134,7 @@ export default function NuevoPaciente() {
 
           <input
             type="date"
+            placeholder="Fecha de nacimiento"
             value={fechaNacimiento}
             onChange={(e) => setFechaNacimiento(e.target.value)}
             className="p-4 rounded-2xl border border-gray-300"
@@ -144,7 +147,13 @@ export default function NuevoPaciente() {
             onChange={(e) => setColor(e.target.value)}
             className="p-4 rounded-2xl border border-gray-300"
           />
-
+<input
+  type="number"
+  placeholder="Peso (kg)"
+  value={peso}
+  onChange={(e) => setPeso(e.target.value)}
+  className="p-4 rounded-2xl border border-gray-300"
+/>
           <button
             onClick={guardarPaciente}
             className="
