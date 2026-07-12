@@ -389,7 +389,7 @@ py-3 md:py-4
 )}
 </div>
      
-      <div className="max-w-4xl mx-auto mt-8 bg-white rounded-3xl shadow-xl p-6 md:p-8">
+<div className="max-w-4xl mx-auto mt-8 bg-white rounded-3xl shadow-xl p-6 md:p-8">
 
   <div className="flex items-center justify-between mb-6">
 
@@ -398,7 +398,7 @@ py-3 md:py-4
     </h2>
 
     <a
-  href={`/pequenos-animales/pacientes/${paciente.id}/nueva-sesion`}
+      href={`/pequenos-animales/pacientes/${paciente.id}/nueva-sesion`}
       className="
         bg-[#0B6A74]
         text-white
@@ -424,118 +424,129 @@ py-3 md:py-4
 
     <div className="grid gap-3">
 
-{sesiones.map((sesion) => (
+      {sesiones.map((sesion) => (
 
-  <a
-    href={`/pequenos-animales/pacientes/${id}/sesiones/${sesion.id}`}
-    key={sesion.id}
-    className="
-      block
-      border
-      rounded-2xl
-      p-4
-      hover:bg-gray-50
-      transition-all
-      shadow-sm
-    "
-  >
-
-    <div>
-
- <strong>
-  {formatearFecha(
-    sesion["Fecha de sesión"]
-  )}
-</strong>
-
-</div>
-<div className="mt-3 text-sm">
-
-  {sesionesTerapias
-    ?.filter(
-      (st) => st["Sesión id"] === sesion.id
-    )
-    .map((st) => {
-
-      const terapia = terapias?.find(
-        (t) => t.id === st["Terapia id"]
-      );
-
-      const parametrosDeLaTerapia =
-        sesionesParametros?.filter(
-          (sp) =>
-            sp["Sesión terapia id"] === st.id
-        );
-
-      return (
         <div
-          key={st.id}
-          className="mb-3"
+          key={sesion.id}
+          className="
+            border
+            rounded-2xl
+            p-4
+            hover:bg-gray-50
+            transition-all
+            shadow-sm
+          "
         >
 
-          <div className="font-semibold">
-            {terapia?.Nombre}
+          <div>
+
+            <strong>
+              {formatearFecha(
+                sesion["Fecha de sesión"]
+              )}
+            </strong>
+
           </div>
 
-          {st["Región anatómica"] && (
-            <div className="text-gray-600 text-xs">
-              📍 {st["Región anatómica"]}
-            </div>
-          )}
+          <div className="mt-3 text-sm">
 
-          <div className="text-xs text-gray-500">
+            {sesionesTerapias
+              ?.filter(
+                (st) =>
+                  st["Sesión id"] === sesion.id
+              )
+              .map((st) => {
 
-            {parametrosDeLaTerapia
-              ?.map((sp) => sp["Valor seleccionado"])
-              .join(" • ")}
+                const terapia =
+                  terapias?.find(
+                    (t) =>
+                      t.id === st["Terapia id"]
+                  );
+
+                const parametrosDeLaTerapia =
+                  sesionesParametros?.filter(
+                    (sp) =>
+                      sp["Sesión terapia id"] ===
+                      st.id
+                  );
+
+                return (
+
+                  <div
+                    key={st.id}
+                    className="mb-3"
+                  >
+
+                    <div className="font-semibold">
+                      {terapia?.Nombre}
+                    </div>
+
+                    {st["Región anatómica"] && (
+
+                      <div className="text-gray-600 text-xs">
+                        📍 {st["Región anatómica"]}
+                      </div>
+
+                    )}
+
+                    <div className="text-xs text-gray-500">
+
+                      {parametrosDeLaTerapia
+                        ?.map(
+                          (sp) =>
+                            sp["Valor seleccionado"]
+                        )
+                        .join(" • ")}
+
+                    </div>
+
+                  </div>
+
+                );
+
+              })}
+
+          </div>
+
+          <div className="text-xs text-gray-500 mt-2">
+            {evolucionTexto(sesion.Evolución)}
+          </div>
+
+          <div className="mt-3 flex justify-end gap-4">
+
+            <a
+              href={`/pequenos-animales/pacientes/${id}/sesiones/${sesion.id}`}
+              className="text-sm text-[#0B6A74] font-semibold"
+            >
+              👁 Ver
+            </a>
+
+            <a
+              href={`/pequenos-animales/pacientes/${id}/sesiones/${sesion.id}/editar`}
+              className="text-sm text-amber-600 font-semibold"
+            >
+              ✏️
+            </a>
+
+            <a
+              href={`/pequenos-animales/pacientes/${id}/sesiones/${sesion.id}/eliminar`}
+              className="text-sm text-red-600 font-semibold"
+            >
+              🗑
+            </a>
 
           </div>
 
         </div>
-      );
-    })}
 
-</div>
-<div className="text-xs text-gray-500 mt-2">
-  {evolucionTexto(sesion.Evolución)}
-</div>
-<div className="mt-3 flex justify-end gap-4">
-
-  <a
-    href={`/pequenos-animales/pacientes/${id}/sesiones/${sesion.id}`}
-    className="
-      text-sm
-      text-[#0B6A74]
-      font-semibold
-    "
-  >
-    👁 Ver
-  </a>
-
-<a
-  href={`/pequenos-animales/pacientes/${id}/sesiones/${sesion.id}/editar`}
-  className="text-sm text-amber-600 font-semibold"
->
-  ✏️
-</a>
-
-<a
-  href={`/pequenos-animales/pacientes/${id}/sesiones/${sesion.id}/eliminar`}
-  className="text-sm text-red-600 font-semibold"
->
-  🗑
-</a>
-
-</div>
-  </a>
-
-))}
+      ))}
 
     </div>
 
   )}
 
 </div>
+
 <div className="max-w-4xl mx-auto mt-8 bg-white rounded-3xl shadow-xl p-6 md:p-8">
 
   <h2 className="text-xl font-bold text-[#0B6A74] mb-6">
@@ -585,6 +596,6 @@ py-3 md:py-4
   )}
 
 </div>
-    </main>
-  );
+</main>
+);
 }
