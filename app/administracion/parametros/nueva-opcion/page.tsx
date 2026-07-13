@@ -19,7 +19,7 @@ function NuevaOpcionContenido() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-
+const volver = searchParams.get("volver");
   const parametroId =
     searchParams.get("parametro");
 
@@ -47,7 +47,11 @@ function NuevaOpcionContenido() {
       return;
     }
 
-    router.back();
+    if (volver) {
+  router.push(volver);
+} else {
+  router.back();
+}
 
   }
 

@@ -26,15 +26,41 @@ type TerapiaSel = {
 };
 
 const [terapiasSeleccionadas, setTerapiasSeleccionadas] = useState<TerapiaSel[]>([]);
+function guardarBorradorSesion() {
+
+  sessionStorage.setItem(
+    "sesionBorrador",
+    JSON.stringify(terapiasSeleccionadas)
+  );
+
+}
 const [estructuras, setEstructuras] = useState<any[]>([]);
 const [valoresParametros, setValoresParametros] = useState<Record<string, string>>({});
 const [estructuraPorTerapia, setEstructuraPorTerapia] = useState<Record<string, string>>({});
 useEffect(() => {
+
   cargarLugares();
   cargarTerapias();
   cargarEstructuras();
   cargarParametros();        
-  cargarOpcionesParametros(); 
+  cargarOpcionesParametros();
+
+  const guardado = sessionStorage.getItem(
+    "sesionBorrador"
+  );
+
+  if (guardado) {
+
+    setTerapiasSeleccionadas(
+      JSON.parse(guardado)
+    );
+
+    sessionStorage.removeItem(
+      "sesionBorrador"
+    );
+
+  }
+
 }, []);
 async function cargarLugares() {
   const { data, error } = await supabase
@@ -360,7 +386,10 @@ router.push(`/equinos/pacientes/${pacienteId}`);
           : t
       )
     )
-  }
+    }
+    guardarBorrador={
+  guardarBorradorSesion
+}
 />
           </div>
         )}

@@ -15,6 +15,7 @@ type Props = {
   opcionesParametros: any[];
   aplicaciones: Aplicacion[];
   onChange: (apps: Aplicacion[]) => void;
+  guardarBorrador: () => void;
 };
 
 export default function TerapiaCard({
@@ -24,6 +25,7 @@ export default function TerapiaCard({
   opcionesParametros,
   aplicaciones,
   onChange,
+  guardarBorrador,
 }: Props) {
   return (
     <div>
@@ -103,40 +105,57 @@ export default function TerapiaCard({
   </div>
 
 )}
-          <p className="mt-4 font-semibold">
-            Estructuras anatómicas
-          </p>
+{terapia.Nombre !== "Ozonoterapia sistémica" && (
 
-          <Select
-            isMulti
-            options={estructuras.map((estructura) => ({
-              value: estructura.Nombre,
-              label: estructura.Nombre,
-            }))}
-            value={aplicacion.estructuras.map((e) => ({
-              value: e,
-              label: e,
-            }))}
-            onChange={(selected) =>
-              onChange(
-                aplicaciones.map((app, i) =>
-                  i === indice
-                    ? {
-                        ...app,
-                        estructuras: selected
-                          ? selected.map((s: any) => s.value)
-                          : [],
-                      }
-                    : app
-                )
-              )
-            }
-            placeholder="Buscar estructuras..."
-          />
+  <>
 
-          {parametros
-            .filter((p) => p["Terapia id"] === terapia.id)
-            .map((parametro) => (
+    <p className="mt-4 font-semibold">
+      Estructuras anatómicas
+    </p>
+
+    <Select
+      isMulti
+      options={estructuras.map((estructura) => ({
+        value: estructura.Nombre,
+        label: estructura.Nombre,
+      }))}
+      value={aplicacion.estructuras.map((e) => ({
+        value: e,
+        label: e,
+      }))}
+      onChange={(selected) =>
+        onChange(
+          aplicaciones.map((app, i) =>
+            i === indice
+              ? {
+                  ...app,
+                  estructuras: selected
+                    ? selected.map((s: any) => s.value)
+                    : [],
+                }
+              : app
+          )
+        )
+      }
+      placeholder="Buscar estructuras..."
+    />
+
+  </>
+
+)}
+
+         {parametros
+  .filter((p) => p["Terapia id"] === terapia.id)
+  .map((parametro) => {
+
+    if (
+      terapia.Nombre === "Ozonoterapia local" &&
+      parametro["Nombre parámetro"] === "Concentración"
+    ) {
+      return null;
+    }
+
+    return (
               <div key={parametro.id} className="mt-4">
                 <p className="font-medium">
                   {parametro["Nombre parámetro"]}
@@ -147,44 +166,63 @@ export default function TerapiaCard({
                   value={
                     aplicacion.parametros[parametro.id] || ""
                   }
-                  onChange={(e) => {
-                    const value = e.target.value;
+                 onChange={(e) => {
 
-                    onChange(
-                      aplicaciones.map((app, i) =>
-                        i === indice
-                          ? {
-                              ...app,
-                              parametros: {
-                                ...app.parametros,
-                                [parametro.id]: value,
-                              },
-                            }
-                          : app
-                      )
-                    );
-                  }}
+  const value = e.target.value;
+
+ if (value === "__NUEVA_OPCION__") {
+
+  guardarBorrador();
+
+  window.location.href =
+    `/administracion/parametros/nueva-opcion?parametro=${parametro.id}&volver=${window.location.pathname}`;
+
+  return;
+
+}
+
+  onChange(
+    aplicaciones.map((app, i) =>
+      i === indice
+        ? {
+            ...app,
+            parametros: {
+              ...app.parametros,
+              [parametro.id]: value,
+            },
+          }
+        : app
+    )
+  );
+
+}}
                 >
-                  <option value="">
-                    Seleccionar
-                  </option>
+                 <option value="">
+  Seleccionar
+</option>
 
-                  {opcionesParametros
-                    .filter(
-                      (o) =>
-                        o["Parámetro id"] === parametro.id
-                    )
-                    .map((opcion) => (
-                      <option
-                        key={opcion.id}
-                        value={opcion.Valor}
-                      >
-                        {opcion.Valor}
-                      </option>
-                    ))}
+{opcionesParametros
+  .filter(
+    (o) =>
+      o["Parámetro id"] === parametro.id
+  )
+  .map((opcion) => (
+    <option
+      key={opcion.id}
+      value={opcion.Valor}
+    >
+      {opcion.Valor}
+    </option>
+  ))}
+
+<option value="__NUEVA_OPCION__">
+  ➕ Agregar nueva opción...
+</option>
                 </select>
               </div>
-            ))}
+                );
+
+  })}
 
           <textarea
             className="w-full mt-4 p-3 border rounded-xl"
