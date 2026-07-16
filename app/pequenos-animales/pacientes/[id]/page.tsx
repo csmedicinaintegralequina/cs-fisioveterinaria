@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import PequenosHeader from "@/app/components/PequenosHeader";
+import ArchivosPaciente from "@/app/components/ArchivosPaciente";
 export default async function FichaPaciente({
   params,
 }: {
@@ -168,47 +169,108 @@ className="
       )}
 
       <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl p-6 md:p-8">
-        <div className="flex items-center justify-between mb-6">
-  <h2 className="text-xl font-bold text-[#0B6A74]">
-    {icono} Datos del paciente
-  </h2>
+       <div className="flex items-center justify-between mb-6">
+
+  <div className="flex items-center gap-4">
+
+    <img
+      src={
+        paciente["foto url"] ||
+        "/sin-foto.png"
+      }
+      alt={paciente.Nombre}
+      className="
+        w-20
+        h-20
+        object-cover
+        rounded-full
+        border-4
+        border-[#0B6A74]
+        shadow-md
+      "
+    />
+
+    <h2 className="text-xl font-bold text-[#0B6A74]">
+       Datos del paciente
+    </h2>
+
+  </div>
+
 
   <a
     href={`/pequenos-animales/pacientes/${paciente.id}/editar-paciente`}
-className="
-  text-sm
-  font-semibold
-  text-amber-600
-  hover:text-amber-700
-  hover:underline
-  transition-all
-"
+    className="
+      text-sm
+      font-semibold
+      text-amber-600
+      hover:text-amber-700
+      hover:underline
+      transition-all
+    "
   >
     ✏️ Editar
   </a>
+
 </div>
-        <div className="grid gap-4">
-          <div>
-            <strong>Especie:</strong> {paciente.Especie}
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
 
-          <div>
-            <strong>Raza:</strong> {paciente.Raza}
-          </div>
+  <div>
+    <strong>Especie:</strong> {paciente.Especie}
+  </div>
 
-          <div>
-            <strong>Sexo:</strong> {paciente.Sexo}
-          </div>
+  <div>
+    <strong>Raza:</strong> {paciente.Raza}
+  </div>
 
-          <div>
-            <strong>Color / Pelaje:</strong> {paciente.Color}
-          </div>
+  <div>
+    <strong>Sexo:</strong> {paciente.Sexo}
+  </div>
 
-          <div>
-            <strong>Fecha nacimiento:</strong>{" "}
-            {paciente["Fecha Nacimiento"]}
-          </div>
-        </div>
+  <div>
+    <strong>Castrado:</strong>{" "}
+    {paciente.Castrado ? "Sí" : "No"}
+  </div>
+
+  <div>
+    <strong>Color / Pelaje:</strong> {paciente.Color}
+  </div>
+
+  <div>
+    <strong>Peso:</strong>{" "}
+    {paciente.Peso ? `${paciente.Peso} kg` : "-"}
+  </div>
+
+  <div>
+    <strong>Fecha nacimiento:</strong>{" "}
+    {paciente["Fecha Nacimiento"] || "-"}
+  </div>
+
+  <div>
+    <strong>Edad:</strong>{" "}
+    {paciente.Edad ? `${paciente.Edad} años` : "-"}
+  </div>
+
+  <div>
+    <strong>Veterinario derivante:</strong>{" "}
+    {paciente["Veterinario derivante"] || "-"}
+  </div>
+
+  <div>
+    <strong>Lugar habitual:</strong>{" "}
+    {paciente["Lugar Habitual"] || "-"}
+  </div>
+
+  <div>
+    <strong>Estado:</strong>{" "}
+    {paciente.Estado || "-"}
+  </div>
+
+  <div>
+    <strong>Tratamiento:</strong>{" "}
+    {paciente["Tipo tratamiento"] || "-"}
+  </div>
+
+</div>
       </div>
          
    <div className="max-w-4xl mx-auto mt-6 bg-white rounded-3xl shadow-xl p-6 md:p-8">
@@ -253,6 +315,11 @@ className="
           <p>{historia["Examen Fisico"]}</p>
         </div>
 
+ <div>
+          <strong>Tratamiento médico:</strong>
+          <p>{historia["Tratamiento"]}</p>
+        </div>
+
         <div>
           <strong>Observaciones:</strong>
           <p>{historia.Observaciones}</p>
@@ -282,7 +349,7 @@ py-3 md:py-4
     </a>
   )}
 </div>
-
+<ArchivosPaciente pacienteId={paciente.id} />
       <div className="max-w-4xl mx-auto mt-6 bg-white rounded-3xl shadow-xl p-6 md:p-8">
         <h2 className="text-2xl font-bold text-[#0B6A74] mb-6">
           🩺 Diagnósticos

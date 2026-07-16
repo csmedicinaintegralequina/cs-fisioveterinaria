@@ -26,7 +26,6 @@ const [nombrePropietarioSeleccionado, setNombrePropietarioSeleccionado] = useSta
   const [especie, setEspecie] = useState(especieInicial);
   const [raza, setRaza] = useState("");
   const [sexo, setSexo] = useState("Macho");
-
   const [castrado, setCastrado] = useState(false);
 
   const [fechaNacimiento, setFechaNacimiento] = useState("");
@@ -73,7 +72,8 @@ useEffect(() => {
 
   const [fotoUrl, setFotoUrl] =
     useState("");
-
+const [fotoArchivo, setFotoArchivo] = useState<File | null>(null);
+const [previewFoto, setPreviewFoto] = useState("");
   useEffect(() => {
 
   cargarPropietarios();
@@ -107,63 +107,115 @@ useEffect(() => {
 
   }
 
-  async function cargarPaciente() {
+async function cargarPaciente() {
 
-    const { data } = await supabase
-      .from("Pacientes")
-      .select("*")
-      .eq("id", pacienteId)
-      .single();
+  console.log("ENTRO A CARGAR PACIENTE", pacienteId);
 
-    if (!data) return;
+  const { data, error } = await supabase
+    .from("Pacientes")
+    .select("*")
+    .eq("id", pacienteId)
+    .single();
 
-    setPropietarioId(data["propietario id"] || "");
 
-    setNombre(data.Nombre || "");
+  console.log("PACIENTE RECIBIDO:", data);
+  console.log("ERROR PACIENTE:", error);
 
-    setEspecie(data.Especie || especieInicial);
 
-    setRaza(data.Raza || "");
+  if (!data) return;
 
-    setSexo(data.Sexo || "Macho");
+  setPropietarioId(data["propietario id"] || "");
 
-    setFechaNacimiento(
-      data["Fecha Nacimiento"] || ""
+  setNombre(data.Nombre || "");
+
+  setEspecie(data.Especie || especieInicial);
+
+  setRaza(data.Raza || "");
+
+  setSexo(data.Sexo || "Macho");
+
+  setFechaNacimiento(
+    data["Fecha Nacimiento"] || ""
+  );
+
+  setEdad(data.Edad || "");
+
+  setPeso(data.Peso || "");
+
+  setColor(data.Color || "");
+
+  setVeterinarioDerivante(
+    data["Veterinario derivante"] || ""
+  );
+
+  setLugarHabitual(
+    data["Lugar Habitual"] || ""
+  );
+
+  setEstado(
+    data.Estado || "Activo"
+  );
+
+  setTipoTratamiento(
+    data["Tipo tratamiento"] || "Rehabilitación"
+  );
+
+  setFotoUrl(
+    data["foto url"] || ""
+  );
+
+  setCastrado(
+    data.Castrado || false
+  );
+}
+async function subirFoto() {
+
+  if (!fotoArchivo) {
+    return fotoUrl;
+  }
+console.log("SUBIENDO FOTO:", fotoArchivo.name);
+
+  const extension =
+    fotoArchivo.name.split(".").pop();
+
+
+  const nombreArchivo =
+    `${Date.now()}.${extension}`;
+
+
+  const { error } =
+    await supabase.storage
+      .from("pacientes")
+      .upload(
+        nombreArchivo,
+        fotoArchivo
+      );
+
+
+  if (error) {
+    console.log(
+      "ERROR SUBIENDO FOTO:",
+      error
     );
 
-    setEdad(data.Edad || "");
+    return fotoUrl;
+  }
 
-    setPeso(data.Peso || "");
 
-    setColor(data.Color || "");
+  const { data } =
+    supabase.storage
+      .from("pacientes")
+      .getPublicUrl(nombreArchivo);
 
-    setVeterinarioDerivante(
-      data["Veterinario derivante"] || ""
-    );
 
-    setLugarHabitual(
-      data["Lugar Habitual"] || ""
-    );
+  return data.publicUrl;
 
-    setEstado(
-      data.Estado || "Activo"
-    );
-
-    setTipoTratamiento(
-      data["Tipo tratamiento"] ||
-      "Rehabilitación"
-    );
-
-    setFotoUrl(
-      data["foto url"] || ""
-    );
-
-    setCastrado(
-      data.Castrado || false
-    );
 }
 async function guardarPaciente() {
-
+const urlFoto =
+  await subirFoto();
+  console.log("ARCHIVO FOTO:", fotoArchivo);
+console.log("URL FOTO FINAL:", urlFoto);
   const datos = {
     Nombre: nombre,
     Especie: especie,
@@ -195,7 +247,7 @@ async function guardarPaciente() {
       tipoTratamiento,
 
     "foto url":
-      fotoUrl,
+  urlFoto,
 
     "propietario id":
       propietarioId,
@@ -471,16 +523,76 @@ if (especie === "Equino") {
 
 </select>
 </div>
-<div className="border border-dashed border-gray-300 rounded-2xl p-6 text-center">
+<div>
 
-  <p className="font-semibold mb-3">
-    Foto del paciente
-  </p>
+<p className="font-medium">
+  Foto del paciente
+</p>
+
+<label
+  className="
+    inline-flex
+    items-center
+    gap-2
+    cursor-pointer
+    bg-[#0B6A74]
+    text-white
+    px-4
+    py-2
+    rounded-xl
+    font-semibold
+    shadow
+    hover:bg-[#09545c]
+    transition
+  "
+>
+
+  📷 Seleccionar foto
 
   <input
     type="file"
     accept="image/*"
+    className="hidden"
+    onChange={(e)=>{
+
+      const archivo =
+        e.target.files?.[0];
+
+      if (!archivo) return;
+
+      setFotoArchivo(archivo);
+
+      setPreviewFoto(
+        URL.createObjectURL(archivo)
+      );
+
+    }}
   />
+
+</label>
+
+
+{previewFoto && (
+  <div className="mt-4">
+
+    <img
+      src={previewFoto}
+      className="
+        w-36
+        h-36
+        object-cover
+        rounded-3xl
+        shadow-lg
+        border
+      "
+    />
+
+    <p className="text-sm text-gray-500 mt-2">
+      Vista previa
+    </p>
+
+  </div>
+)}
 
 </div>
 <button

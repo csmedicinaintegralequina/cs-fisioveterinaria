@@ -18,6 +18,7 @@ export default function HistoriaClinica() {
   const [anamnesis, setAnamnesis] = useState("");
   const [examenFisico, setExamenFisico] = useState("");
   const [observaciones, setObservaciones] = useState("");
+   const [Tratamiento, setTratamiento] = useState("");
 const [paciente, setPaciente] = useState<any>(null);
 
 useEffect(() => {
@@ -42,6 +43,7 @@ useEffect(() => {
           "Motivo Consulta": motivoConsulta,
           Anamnesis: anamnesis,
           "Examen Fisico": examenFisico,
+          Tratamiento: Tratamiento,
           Observaciones: observaciones,
         },
       ]);
@@ -89,6 +91,14 @@ router.push(`/pequenos-animales/pacientes/${pacienteId}`);
             rows={6}
             value={examenFisico}
             onChange={(e) => setExamenFisico(e.target.value)}
+            className="p-4 rounded-2xl border border-gray-300"
+          />
+
+ <textarea
+            placeholder="Examen físico"
+            rows={6}
+            value={Tratamiento}
+            onChange={(e) => setTratamiento(e.target.value)}
             className="p-4 rounded-2xl border border-gray-300"
           />
 

@@ -32,6 +32,7 @@ function guardarBorradorSesion() {
 }
 const [terapiasSeleccionadas, setTerapiasSeleccionadas] = useState<TerapiaSel[]>([]);
 const [estructuras, setEstructuras] = useState<any[]>([]);
+const [pesoPaciente, setPesoPaciente] = useState("");
 const [valoresParametros, setValoresParametros] = useState<Record<string, string>>({});
 const [estructuraPorTerapia, setEstructuraPorTerapia] = useState<Record<string, string>>({});
 useEffect(() => {
@@ -40,6 +41,7 @@ useEffect(() => {
   cargarEstructuras();
   cargarParametros();        
   cargarOpcionesParametros(); 
+    cargarPaciente();
 
   const borrador = sessionStorage.getItem("sesionBorrador");
 
@@ -96,6 +98,26 @@ async function cargarOpcionesParametros() {
     .select("*");
 
   setOpcionesParametros(data || []);
+}
+async function cargarPaciente() {
+
+  const { data, error } = await supabase
+    .from("Pacientes")
+    .select("*")
+    .eq("id", pacienteId)
+    .single();
+
+
+  if (error) {
+    console.log("ERROR PACIENTE:", error);
+    return;
+  }
+
+
+  if (data) {
+    setPesoPaciente(data.Peso || "");
+  }
+
 }
 async function guardarSesion() {
   console.log("BOTON FUNCIONA");
@@ -357,6 +379,7 @@ router.push(`/pequenos-animales/pacientes/${pacienteId}`);
   estructuras={estructuras}
   parametros={parametros}
   opcionesParametros={opcionesParametros}
+  pesoPaciente={pesoPaciente}
   aplicaciones={
     terapiasSeleccionadas.find(
       (t) => t.terapiaId === terapia.id

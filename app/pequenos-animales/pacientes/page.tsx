@@ -77,29 +77,74 @@ export default function Pacientes() {
       href={`/pequenos-animales/pacientes/${paciente.id}`}
     >
       <div
-        className="
-          bg-white
-          rounded-3xl
-          p-5
-          shadow-lg
-          hover:shadow-2xl
-          hover:scale-[1.02]
-          transition-all
-          cursor-pointer
-        "
-      >
-       <h2 className="text-2xl font-bold text-[#45B8AC]">
-  {icono} {paciente.Nombre}
-</h2>
+  className="
+    bg-white
+    rounded-3xl
+    p-5
+    shadow-lg
+    hover:shadow-2xl
+    hover:scale-[1.02]
+    transition-all
+    cursor-pointer
+    flex
+    items-center
+    gap-5
+  "
+>
+{paciente["foto url"] ? (
+  <img
+    src={paciente["foto url"]}
+    alt={paciente.Nombre}
+    className="
+      w-20
+      h-20
+      rounded-full
+      object-cover
+      border-4
+      border-[#0B6A74]
+      shadow-md
+      flex-shrink-0
+    "
+  />
+) : (
+  <div
+    className="
+      w-20
+      h-20
+      rounded-full
+      bg-[#E6F3F1]
+      border-4
+      border-[#0B6A74]
+      shadow-md
+      flex-shrink-0
+      flex
+      items-center
+      justify-center
+      text-4xl
+    "
+  >
+    {icono}
+  </div>
+)}
 
-        <p className="text-gray-600 mt-2">
-          {paciente.Raza}
-        </p>
 
-        <p className="text-gray-500">
-          {paciente.Color}
-        </p>
-      </div>
+  <div>
+
+    <h2 className="text-2xl font-bold text-[#45B8AC]">
+      {icono} {paciente.Nombre}
+    </h2>
+
+    <p className="text-gray-600 mt-2">
+      {paciente.Raza}
+    </p>
+
+    <p className="text-gray-500">
+      {paciente.Color}
+    </p>
+
+  </div>
+
+</div>
     </Link>
   );
 })}

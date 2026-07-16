@@ -24,7 +24,7 @@ type TerapiaSel = {
   terapiaId: string;
   aplicaciones: any[];
 };
-
+const [pesoPaciente, setPesoPaciente] = useState("");
 const [terapiasSeleccionadas, setTerapiasSeleccionadas] =
 useState<TerapiaSel[]>([]);
 const [estructuras, setEstructuras] = useState<any[]>([]);
@@ -81,7 +81,7 @@ async function cargarSesion() {
   setLugar(data["Lugar de atención"] || "");
   setEvolucion(data.Evolución || "3");
   setObservaciones(data.Observaciones || "");
-
+setPesoPaciente(data.Peso || "");
 }
 async function cargarTerapiasSesion() {
 
@@ -538,6 +538,8 @@ router.push(`/equinos/pacientes/${pacienteId}`);
   estructuras={estructuras}
   parametros={parametros}
   opcionesParametros={opcionesParametros}
+  pesoPaciente={pesoPaciente}
+  mostrarJeringas={true}
   aplicaciones={
     terapiasSeleccionadas.find(
       (t) => t.terapiaId === terapia.id

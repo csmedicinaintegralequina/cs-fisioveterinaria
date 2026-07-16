@@ -10,7 +10,7 @@ export default function NuevaSesion() {
   const params = useParams();
 const router = useRouter();
   const pacienteId = params.id as string;
-
+const [pesoPaciente, setPesoPaciente] = useState("");
 const fechaSesion = new Date().toISOString().split("T")[0];
   const [veterinario, setVeterinario] = useState("");
   const [lugar, setLugar] = useState("");
@@ -44,6 +44,7 @@ useEffect(() => {
   cargarEstructuras();
   cargarParametros();        
   cargarOpcionesParametros();
+  cargarPesoPaciente();
 
   const guardado = sessionStorage.getItem(
     "sesionBorrador"
@@ -109,6 +110,17 @@ async function cargarOpcionesParametros() {
     .select("*");
 
   setOpcionesParametros(data || []);
+}
+async function cargarPesoPaciente() {
+  const { data, error } = await supabase
+    .from("Pacientes")
+    .select("Peso")
+    .eq("id", pacienteId)
+    .single();
+
+  if (!error && data) {
+    setPesoPaciente(data.Peso?.toString() || "");
+  }
 }
 async function guardarSesion() {
   console.log("BOTON FUNCIONA");
@@ -370,6 +382,8 @@ router.push(`/equinos/pacientes/${pacienteId}`);
   estructuras={estructuras}
   parametros={parametros}
   opcionesParametros={opcionesParametros}
+  pesoPaciente={pesoPaciente}
+  mostrarJeringas={true}
   aplicaciones={
     terapiasSeleccionadas.find(
       (t) => t.terapiaId === terapia.id

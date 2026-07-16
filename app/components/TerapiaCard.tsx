@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Select from "react-select";
 
 type Aplicacion = {
@@ -14,8 +15,10 @@ type Props = {
   parametros: any[];
   opcionesParametros: any[];
   aplicaciones: Aplicacion[];
+  pesoPaciente?: string;
   onChange: (apps: Aplicacion[]) => void;
   guardarBorrador: () => void;
+  mostrarJeringas?: boolean;
 };
 
 export default function TerapiaCard({
@@ -24,20 +27,85 @@ export default function TerapiaCard({
   parametros,
   opcionesParametros,
   aplicaciones,
+  pesoPaciente,
   onChange,
   guardarBorrador,
+  mostrarJeringas = false,
 }: Props) {
+
+  const [peso, setPeso] = useState(pesoPaciente || "");
+
+  useEffect(() => {
+    setPeso(pesoPaciente || "");
+  }, [pesoPaciente]);
+
+
   return (
     <div>
-      {aplicaciones.map((aplicacion, indice) => (
-        <div
-          key={indice}
-          className="ml-8 mt-4 bg-gray-50 rounded-2xl p-5"
-        >
-          <h3 className="text-lg font-bold text-[#0B6A74]">
-            Aplicación {indice + 1}
-          </h3>
-{/* OZONOTERAPIA SISTÉMICA */}
+      {aplicaciones.map((aplicacion, indice) => {
+
+        const estresOxidativo = Number(
+  (
+    aplicacion.parametros[
+      String(
+        parametros.find(
+          (p) =>
+            p["Terapia id"] === terapia.id &&
+            p["Nombre parámetro"] === "Estrés oxidativo"
+        )?.id
+      )
+    ] || ""
+  ).replace(/[^\d.]/g, "")
+);
+
+
+const concentracion = Number(
+  (
+    aplicacion.parametros[
+      String(
+        parametros.find(
+          (p) =>
+            p["Terapia id"] === terapia.id &&
+            p["Nombre parámetro"] === "Concentración"
+        )?.id
+      )
+    ] || ""
+  ).replace(/[^\d.]/g, "")
+);
+
+        const volumen =
+          estresOxidativo && concentracion
+            ? (
+                (Number(peso) * estresOxidativo) /
+                concentracion
+              ).toFixed(1)
+            : "";
+console.log({
+  peso,
+  estresOxidativo,
+  concentracion,
+  volumen
+});
+console.log(
+  "VALORES:",
+  Object.values(aplicacion.parametros)
+);
+        const jeringas =
+          volumen
+            ? (Number(volumen) / 60).toFixed(2)
+            : "";
+
+
+        return (
+          <div
+            key={indice}
+            className="ml-8 mt-4 bg-gray-50 rounded-2xl p-5"
+          >
+
+            <h3 className="text-lg font-bold text-[#0B6A74]">
+              Aplicación {indice + 1}
+            </h3>
+            {/* OZONOTERAPIA SISTÉMICA */}
 
 {terapia.Nombre === "Ozonoterapia sistémica" && (
 
@@ -45,14 +113,21 @@ export default function TerapiaCard({
 
     <div>
 
-      <p className="font-medium">Peso (kg)</p>
+      <p className="font-medium">
+        Peso (kg)
+      </p>
 
       <input
         type="number"
+        value={peso}
+        onChange={(e) =>
+          setPeso(e.target.value)
+        }
         className="w-full mt-2 p-3 border rounded-xl"
       />
 
     </div>
+
 
     <div>
 
@@ -61,15 +136,40 @@ export default function TerapiaCard({
       </p>
 
       <input
-        type="number"
-        className="w-full mt-2 p-3 border rounded-xl"
+        type="text"
+        value={volumen}
+        readOnly
+        className="w-full mt-2 p-3 border rounded-xl bg-gray-100"
       />
+
+
+      {mostrarJeringas && (
+
+<div className="mt-4">
+
+  <p className="font-medium">
+    Jeringas de 60 ml
+  </p>
+
+  <input
+    type="text"
+    value={jeringas}
+    readOnly
+    className="w-full mt-2 p-3 border rounded-xl bg-gray-100"
+  />
+
+</div>
+
+)}
 
     </div>
 
   </div>
 
 )}
+
+
+
 {/* OZONOTERAPIA LOCAL */}
 
 {terapia.Nombre === "Ozonoterapia Local" && (
@@ -89,6 +189,7 @@ export default function TerapiaCard({
 
     </div>
 
+
     <div>
 
       <p className="font-medium">
@@ -105,6 +206,11 @@ export default function TerapiaCard({
   </div>
 
 )}
+
+
+
+{/* ESTRUCTURAS */}
+
 {terapia.Nombre !== "Ozonoterapia sistémica" && (
 
   <>
@@ -113,16 +219,20 @@ export default function TerapiaCard({
       Estructuras anatómicas
     </p>
 
+
     <Select
       isMulti
       options={estructuras.map((estructura) => ({
         value: estructura.Nombre,
         label: estructura.Nombre,
       }))}
+
       value={aplicacion.estructuras.map((e) => ({
         value: e,
         label: e,
       }))}
+
+
       onChange={(selected) =>
         onChange(
           aplicaciones.map((app, i) =>
@@ -130,22 +240,26 @@ export default function TerapiaCard({
               ? {
                   ...app,
                   estructuras: selected
-                    ? selected.map((s: any) => s.value)
+                    ? selected.map(
+                        (s: any) => s.value
+                      )
                     : [],
                 }
               : app
           )
         )
       }
+
       placeholder="Buscar estructuras..."
     />
 
   </>
 
 )}
-
-         {parametros
-  .filter((p) => p["Terapia id"] === terapia.id)
+{parametros
+  .filter(
+    (p) => p["Terapia id"] === terapia.id
+  )
   .map((parametro) => {
 
     if (
@@ -155,119 +269,173 @@ export default function TerapiaCard({
       return null;
     }
 
+
     return (
-              <div key={parametro.id} className="mt-4">
-                <p className="font-medium">
-                  {parametro["Nombre parámetro"]}
-                </p>
+      <div
+        key={parametro.id}
+        className="mt-4"
+      >
 
-                <select
-                  className="w-full mt-2 p-3 border rounded-xl"
-                  value={
-                    aplicacion.parametros[parametro.id] || ""
-                  }
-                 onChange={(e) => {
+        <p className="font-medium">
+          {parametro["Nombre parámetro"]}
+        </p>
 
-  const value = e.target.value;
 
- if (value === "__NUEVA_OPCION__") {
+        <select
+          className="w-full mt-2 p-3 border rounded-xl"
 
-  guardarBorrador();
-
-  window.location.href =
-    `/administracion/parametros/nueva-opcion?parametro=${parametro.id}&volver=${window.location.pathname}`;
-
-  return;
-
-}
-
-  onChange(
-    aplicaciones.map((app, i) =>
-      i === indice
-        ? {
-            ...app,
-            parametros: {
-              ...app.parametros,
-              [parametro.id]: value,
-            },
+          value={
+            aplicacion.parametros[parametro.id] || ""
           }
-        : app
-    )
-  );
 
-}}
-                >
-                 <option value="">
-  Seleccionar
-</option>
 
-{opcionesParametros
-  .filter(
-    (o) =>
-      o["Parámetro id"] === parametro.id
-  )
-  .map((opcion) => (
-    <option
-      key={opcion.id}
-      value={opcion.Valor}
-    >
-      {opcion.Valor}
-    </option>
-  ))}
+          onChange={(e) => {
 
-<option value="__NUEVA_OPCION__">
-  ➕ Agregar nueva opción...
-</option>
-                </select>
-              </div>
-                );
+            const value = e.target.value;
+
+
+            if (
+              value === "__NUEVA_OPCION__"
+            ) {
+
+              guardarBorrador();
+
+
+              window.location.href =
+                `/administracion/parametros/nueva-opcion?parametro=${parametro.id}&volver=${window.location.pathname}`;
+
+
+              return;
+
+            }
+
+
+            onChange(
+              aplicaciones.map((app, i) =>
+                i === indice
+                  ? {
+                      ...app,
+
+                      parametros: {
+                        ...app.parametros,
+                        [parametro.id]: value,
+                      },
+
+                    }
+
+                  : app
+              )
+            );
+
+          }}
+        >
+
+          <option value="">
+            Seleccionar
+          </option>
+
+
+          {opcionesParametros
+            .filter(
+              (o) =>
+                o["Parámetro id"] === parametro.id
+            )
+            .map((opcion) => (
+
+              <option
+                key={opcion.id}
+                value={opcion.Valor}
+              >
+                {opcion.Valor}
+              </option>
+
+            ))}
+
+
+          <option value="__NUEVA_OPCION__">
+            ➕ Agregar nueva opción...
+          </option>
+
+
+        </select>
+
+      </div>
+
+    );
 
   })}
 
-          <textarea
-            className="w-full mt-4 p-3 border rounded-xl"
-            placeholder="Observaciones"
-            value={aplicacion.observaciones}
-            onChange={(e) => {
-              const value = e.target.value;
 
-              onChange(
-                aplicaciones.map((app, i) =>
-                  i === indice
-                    ? {
-                        ...app,
-                        observaciones: value,
-                      }
-                    : app
-                )
-              );
-            }}
-          />
-        </div>
-      ))}
 
-      <button
-        onClick={() =>
-          onChange([
-            ...aplicaciones,
-            {
-              estructuras: [],
-              parametros: {},
-              observaciones: "",
-            },
-          ])
-        }
-        className="
-          mt-6
-          bg-[#0B6A74]
-          text-white
-          px-4
-          py-2
-          rounded-xl
-        "
-      >
-        ➕ Agregar aplicación
-      </button>
+<textarea
+  className="w-full mt-4 p-3 border rounded-xl"
+
+  placeholder="Observaciones"
+
+  value={aplicacion.observaciones}
+
+
+  onChange={(e) => {
+
+    const value = e.target.value;
+
+
+    onChange(
+      aplicaciones.map((app, i) =>
+        i === indice
+          ? {
+              ...app,
+              observaciones: value,
+            }
+
+          : app
+      )
+    );
+
+  }}
+
+/>
+
+
+</div>
+        );
+
+      })}
+
+
+
+<button
+
+  onClick={() =>
+    onChange([
+      ...aplicaciones,
+
+      {
+        estructuras: [],
+        parametros: {},
+        observaciones: "",
+      },
+
+    ])
+
+  }
+
+
+  className="
+    mt-6
+    bg-[#0B6A74]
+    text-white
+    px-4
+    py-2
+    rounded-xl
+  "
+
+>
+
+  ➕ Agregar aplicación
+
+</button>
+
     </div>
   );
 }

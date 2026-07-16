@@ -14,6 +14,7 @@ export default function HistoriaClinica() {
   const [anamnesis, setAnamnesis] = useState("");
   const [examenFisico, setExamenFisico] = useState("");
   const [observaciones, setObservaciones] = useState("");
+  const [Tratamiento, setTratamiento] = useState("");
 
   async function guardarHistoria() {
     const { error } = await supabase
@@ -24,6 +25,7 @@ export default function HistoriaClinica() {
           "Motivo Consulta": motivoConsulta,
           Anamnesis: anamnesis,
           "Examen Fisico": examenFisico,
+          Tratamiento: Tratamiento,
           Observaciones: observaciones,
         },
       ]);
@@ -76,7 +78,13 @@ router.push(`/equinos/pacientes/${pacienteId}`);
             onChange={(e) => setExamenFisico(e.target.value)}
             className="p-4 rounded-2xl border border-gray-300"
           />
-
+<textarea
+            placeholder="Tratamientos"
+            rows={6}
+            value={Tratamiento}
+            onChange={(e) => setTratamiento(e.target.value)}
+            className="p-4 rounded-2xl border border-gray-300"
+          />
           <textarea
             placeholder="Observaciones"
             rows={5}

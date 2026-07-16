@@ -70,7 +70,7 @@ const terapiasOrdenadas = terapias.map((terapia) => ({
       <div className="max-w-4xl mx-auto mt-8">
 
         <Link
-          href="/administracion/parametros/nueva-opcion"
+          href="/administracion/parametros/nueva"
           className="
             inline-block
             bg-[#0B6A74]

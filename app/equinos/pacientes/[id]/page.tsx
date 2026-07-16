@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import EquinosHeader from "@/app/components/EquinosHeader";
-
+import ArchivosPaciente from "@/app/components/ArchivosPaciente";
 export default async function FichaPaciente({
   params,
 }: {
@@ -277,6 +277,11 @@ className="
           <p>{historia["Examen Fisico"]}</p>
         </div>
 
+ <div>
+          <strong>Tratamientos médicos:</strong>
+          <p>{historia["Tratamientos"]}</p>
+        </div>
+
         <div>
           <strong>Observaciones:</strong>
           <p>{historia.Observaciones}</p>
@@ -306,7 +311,9 @@ py-3 md:py-4
     </a>
   )}
 </div>
-
+<ArchivosPaciente
+  pacienteId={paciente.id}
+/>
       <div className="max-w-4xl mx-auto mt-6 bg-white rounded-3xl shadow-xl p-6 md:p-8">
         <h2 className="text-2xl font-bold text-[#0B6A74] mb-6">
           🩺 Diagnósticos
