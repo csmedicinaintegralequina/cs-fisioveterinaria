@@ -7,6 +7,7 @@ type Aplicacion = {
   estructuras: string[];
   parametros: Record<string, string>;
   observaciones: string;
+  protocoloId?: string;
 };
 
 type Props = {
@@ -14,6 +15,8 @@ type Props = {
   estructuras: any[];
   parametros: any[];
   opcionesParametros: any[];
+  protocolos: any[];
+  parametrosProtocolo: any[];
   aplicaciones: Aplicacion[];
   pesoPaciente?: string;
   onChange: (apps: Aplicacion[]) => void;
@@ -26,6 +29,8 @@ export default function TerapiaCard({
   estructuras,
   parametros,
   opcionesParametros,
+  protocolos,
+  parametrosProtocolo,
   aplicaciones,
   pesoPaciente,
   onChange,
@@ -214,7 +219,75 @@ console.log(
 {terapia.Nombre !== "Ozonoterapia sistémica" && (
 
   <>
+<div className="mt-4">
 
+  <p className="font-semibold">
+    Protocolo
+  </p>
+
+  <select
+    className="w-full mt-2 p-3 border rounded-xl"
+    value={aplicacion.protocoloId || ""}
+    onChange={(e) => {
+
+      const protocoloId = e.target.value;
+
+      let nuevosParametros = {
+        ...aplicacion.parametros,
+      };
+
+      if (protocoloId) {
+
+        (parametrosProtocolo || [])
+  .filter(
+            (pp) => pp["Protocolo id"] === protocoloId
+          )
+          .forEach((pp) => {
+
+            nuevosParametros[pp["Parámetro id"]] =
+              pp.valor;
+
+          });
+
+      }
+
+      onChange(
+        aplicaciones.map((app, i) =>
+          i === indice
+            ? {
+                ...app,
+                protocoloId,
+                parametros: nuevosParametros,
+              }
+            : app
+        )
+      );
+
+    }}
+  >
+
+    <option value="">
+      Ninguno
+    </option>
+
+    {(protocolos || [])
+  .filter(
+    (p) => p["Terapia id"] === terapia.id
+  )
+      .map((protocolo) => (
+
+        <option
+          key={protocolo.id}
+          value={protocolo.id}
+        >
+          {protocolo.Nombre}
+        </option>
+
+      ))}
+
+  </select>
+
+</div>
     <p className="mt-4 font-semibold">
       Estructuras anatómicas
     </p>

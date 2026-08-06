@@ -19,6 +19,8 @@ const [fechaSesion, setFechaSesion] = useState("");
   const [pesoPaciente, setPesoPaciente] = useState("");
   const [observaciones, setObservaciones] = useState("");
   const [lugares, setLugares] = useState<any[]>([]);
+  const [protocolos, setProtocolos] = useState<any[]>([]);
+const [parametrosProtocolo, setParametrosProtocolo] = useState<any[]>([]);
   const [terapias, setTerapias] = useState<any[]>([]);
 type TerapiaSel = {
   terapiaId: string;
@@ -42,6 +44,8 @@ useEffect(() => {
   cargarTerapiasSesion();
   cargarParametrosSesion();
   cargarPaciente();
+  cargarProtocolos();
+cargarParametrosProtocolo();
 }, []);
 async function cargarSesion() {
 
@@ -105,6 +109,36 @@ async function cargarTerapiasSesion() {
   setTerapiasSeleccionadas(
     Object.values(agrupadas)
   );
+
+}
+async function cargarProtocolos() {
+
+  const { data, error } = await supabase
+    .from("Protocolos")
+    .select("*");
+
+  if (error) {
+    console.log(error);
+    return;
+  }
+
+  setProtocolos(data || []);
+
+}
+
+
+async function cargarParametrosProtocolo() {
+
+  const { data, error } = await supabase
+    .from("Parámetros protocolo")
+    .select("*");
+
+  if (error) {
+    console.log(error);
+    return;
+  }
+
+  setParametrosProtocolo(data || []);
 
 }
 async function cargarParametrosSesion() {
@@ -554,6 +588,8 @@ router.push(`/pequenos-animales/pacientes/${pacienteId}`);
                 parametros={parametros}
                 opcionesParametros={opcionesParametros}
                 pesoPaciente={pesoPaciente}
+                protocolos={protocolos}
+parametrosProtocolo={parametrosProtocolo}
                 aplicaciones={
                   terapiasSeleccionadas.find(
                     (t) =>

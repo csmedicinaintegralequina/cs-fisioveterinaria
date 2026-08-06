@@ -613,7 +613,17 @@ py-3 md:py-4
 >
   🗑
 </a>
-
+<a
+  href={`/equinos/pacientes/${id}/sesiones/${sesion.id}/pdf`}
+  target="_blank"
+  className="
+    text-sm
+    text-[#0B6A74]
+    font-semibold
+  "
+>
+  📄 PDF
+</a>
 </div>
   </a>
 

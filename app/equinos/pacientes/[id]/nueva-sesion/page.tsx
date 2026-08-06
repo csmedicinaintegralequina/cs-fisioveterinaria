@@ -20,6 +20,8 @@ const fechaSesion = new Date().toISOString().split("T")[0];
   const [terapias, setTerapias] = useState<any[]>([]);
   const [parametros, setParametros] = useState<any[]>([]);
 const [opcionesParametros, setOpcionesParametros] = useState<any[]>([]);
+const [parametrosProtocolo, setParametrosProtocolo] = useState<any[]>([]);
+const [protocolos, setProtocolos] = useState<any[]>([]);
 type TerapiaSel = {
   terapiaId: string;
   aplicaciones: any[];
@@ -45,6 +47,8 @@ useEffect(() => {
   cargarParametros();        
   cargarOpcionesParametros();
   cargarPesoPaciente();
+  cargarProtocolos();
+  cargarParametrosProtocolo();
 
   const guardado = sessionStorage.getItem(
     "sesionBorrador"
@@ -110,6 +114,30 @@ async function cargarOpcionesParametros() {
     .select("*");
 
   setOpcionesParametros(data || []);
+}
+async function cargarProtocolos() {
+  const { data, error } = await supabase
+    .from("Protocolos")
+    .select("*");
+
+  if (error) {
+    console.log(error);
+    return;
+  }
+
+  setProtocolos(data || []);
+}
+async function cargarParametrosProtocolo() {
+  const { data, error } = await supabase
+    .from("Parámetros protocolo")
+    .select("*");
+
+  if (error) {
+    console.log(error);
+    return;
+  }
+
+  setParametrosProtocolo(data || []);
 }
 async function cargarPesoPaciente() {
   const { data, error } = await supabase
@@ -382,6 +410,8 @@ router.push(`/equinos/pacientes/${pacienteId}`);
   estructuras={estructuras}
   parametros={parametros}
   opcionesParametros={opcionesParametros}
+   protocolos={protocolos}
+   parametrosProtocolo={parametrosProtocolo}
   pesoPaciente={pesoPaciente}
   mostrarJeringas={true}
   aplicaciones={
