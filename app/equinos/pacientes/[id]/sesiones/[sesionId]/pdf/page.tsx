@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import Image from "next/image";
+import BotonDescargarPDF from "@/app/components/BotonDescargarPDF";
 export default async function PDFSesion({
   params,
 }: {
@@ -74,43 +75,55 @@ console.log("TERAPIAS:", sesionesTerapias);
 
 return (
 
-<main
-className="
-min-h-screen
-bg-white
-max-w-4xl
-mx-auto
-p-10
-text-gray-800
-"
->
+  <>
+  
+    <div className="flex justify-end mb-6">
+      <BotonDescargarPDF
+        nombrePaciente={paciente?.Nombre}
+        fecha={sesion?.["Fecha de sesión"]}
+      />
+    </div>
 
 
+    <div id="contenido-pdf">
+
+      <main
+        className="
+        bg-white
+        max-w-xl
+        mx-auto
+        p-3
+        text-gray-800
+        "
+      >
 {/* ENCABEZADO */}
 
 <header
 className="
 text-center
-border-b
-pb-6
+border-b-2
+border-[#0B6A74]
+pb-2
 "
 >
 
 <Image
   src="/pdf/logocs.png"
   alt="Logo Medicina Integral Equina"
-  width={300}
-  height={150}
+  width={190}
+  height={95}
   className="mx-auto object-contain"
 />
 
 
 <h1
 className="
-text-3xl
+text-2xl
 font-bold
 text-[#0B6A74]
-mt-4
+mt-2
+
+
 "
 >
 Informe de sesión
@@ -125,35 +138,35 @@ Informe de sesión
 
 <section
 className="
-mt-8
+mt-4
 grid
 gap-2
 "
 >
 
-<p>
+<p className="text-sm">
 <b>Paciente:</b> {paciente?.Nombre}
 </p>
 
 
-<p>
+<p className="text-sm">
 <b>Propietario:</b> {propietario?.Nombre}
 </p>
 
 
-<p>
+<p className="text-sm">
 <b>Fecha:</b> {sesion?.["Fecha de sesión"]}
 </p>
 
 
-<p>
+<p className="text-sm">
 <b>Sesión Nº:</b> {sesion?.["Número de sesión"] || "-"}
 </p>
 
 
 {paciente?.["Veterinario derivante"] && (
 
-<p>
+<p className="text-sm">
 <b>Veterinario derivante:</b>{" "}
 {paciente["Veterinario derivante"]}
 </p>
@@ -171,17 +184,16 @@ gap-2
 
 <section
 className="
-mt-10
+mt-5
 "
 >
 
 <h3
 className="
-text-xl
+text-base
 font-bold
 text-[#0B6A74]
-border-b
-pb-2
+mb-3
 "
 >
 Evaluación de control
@@ -190,13 +202,12 @@ Evaluación de control
 
 <p
 className="
-mt-4
+text-sm
 whitespace-pre-line
 "
 >
 {sesion?.Observaciones || ""}
 </p>
-
 
 </section>
 
@@ -208,86 +219,88 @@ whitespace-pre-line
 
 <section
 className="
-mt-10
+mt-5
 "
 >
 
-
 <h3
 className="
-text-xl
+text-base
 font-bold
 text-[#0B6A74]
-border-b
-pb-2
+mb-3
 "
 >
 Terapias realizadas
 </h3>
 
 
-
-{sesionesTerapias?.map((terapia:any)=>(
-
+{sesionesTerapias?.map((st:any)=>(
 
 <div
-key={terapia.id}
+key={st.id}
 className="
-mt-6
-border-b
-pb-4
+mt-3
+pb-2
 "
 >
 
-
-<h4
+<div
 className="
 font-bold
-text-lg
+text-[#4FA8B8]
+text-sm
 "
 >
-{terapia.Terapias?.Nombre}
-</h4>
-
-
-<p>
-<b>Estructura:</b>{" "}
-{terapia["Región anatómica"] || "-"}
-</p>
-
-
-<p
-className="
-mt-2
-italic
-"
->
-<b>Observaciones:</b>{" "}
-{terapia.Observaciones || ""}
-</p>
-
-
+• {st.Terapias?.Nombre}
 </div>
 
+
+{st["Región anatómica"] && (
+
+<div
+className="
+text-[11px]
+text-gray-600
+mt-1
+"
+>
+📍 {st["Región anatómica"]}
+</div>
+
+)}
+
+
+{st.Observaciones && (
+
+<div
+className="
+text-[10px]
+italic
+text-gray-500
+mt-1
+"
+>
+📝 {st.Observaciones}
+</div>
+
+)}
+
+</div>
 
 ))}
 
 
-
 </section>
-
-
-
-
 
 {/* FIRMAS */}
 
 <section
 className="
-mt-20
+mt-5
 grid
 grid-cols-3
-gap-8
+gap-4
 text-center
 items-end
 "
@@ -295,26 +308,30 @@ items-end
 
 <div>
 
-<div className="h-20 flex items-center justify-center">
+<div className="h-12 flex items-center justify-center">
 <img
 src="/pdf/firmajose.png"
 alt="Firma Josefina"
 className="
-max-h-20
+max-h-12
 object-contain
 "
 />
 </div>
 
-<p className="
+<p
+className="
 border-t
-mt-2
-pt-2
-">
+mt-0
+pt-1
+text-[9px]
+font-semibold
+"
+>
 M.V. Josefina Chayer
 </p>
 
-<p className="text-sm">
+<p className="text-[9px]">
 MP 16.214
 </p>
 
@@ -324,27 +341,32 @@ MP 16.214
 
 <div>
 
-<div className="h-20 flex items-center justify-center">
+<div className="h-12 flex items-center justify-center">
 
 <img
 src="/pdf/firmaflor.png"
 alt="Firma Florencia"
 className="
-max-h-20
+max-h-12
 object-contain
 "
 />
 
 </div>
 
-<p className="
+<p
+className="
 border-t
-mt-2
-pt-2
-">
+mt-0
+pt-1
+text-[9px]
+font-semibold
+"
+>
 M.V. Florencia Solano
 </p>
-<p className="text-sm">
+
+<p className="text-[9px]">
 MP 16.352
 </p>
 
@@ -352,37 +374,44 @@ MP 16.352
 
 
 
+
 <div>
+
+<div className="h-12 flex items-center justify-center">
 
 <img
 src="/pdf/firmatino.png"
 alt="Firma Martín"
 className="
-mx-auto
-h-20
+max-h-12
 object-contain
 "
 />
 
-<p className="
+</div>
+
+<p
+className="
 border-t
-mt-2
-pt-2
-">
+mt-0
+pt-1
+text-[9px]
+font-semibold
+"
+>
 M.V. Martín Gerez
 </p>
 
-<p className="text-sm">
+<p className="text-[9px]">
 MP 16.511
 </p>
-
 </div>
+ </section>
 
+ </main>
 
-</section>
+    </div>
 
-
-
-</main>
+  </>
 
 );}
