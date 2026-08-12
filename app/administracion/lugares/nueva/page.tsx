@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter, useSearchParams } from "next/navigation";
 import EquinosHeader from "@/app/components/EquinosHeader";
 
-export default function NuevoLugar() {
+function NuevoLugarContenido() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -82,5 +82,12 @@ export default function NuevoLugar() {
       </div>
 
     </main>
+  );
+}
+export default function NuevoLugar() {
+  return (
+    <Suspense fallback={null}>
+      <NuevoLugarContenido />
+    </Suspense>
   );
 }
