@@ -144,7 +144,7 @@ return (
       alt="Logo Medicina Integral Equina"
       width={210}
       height={95}
-      className="max-h-[95px] w-auto object-contain"
+      className="w-auto max-w–full max-h-[95px] object-contain"
     />
   </div>
 
