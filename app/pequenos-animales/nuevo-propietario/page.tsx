@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
-import EquinosHeader from "@/app/components/EquinosHeader";
+import PequenosHeader from "@/app/components/PequenosHeader";
 
 export default function NuevoPropietario() {
   const [nombreApellido, setNombreApellido] = useState("");
@@ -36,13 +36,13 @@ export default function NuevoPropietario() {
     alert("Propietario guardado correctamente");
 
 window.location.href =
-  `//pequenos-animales//paciente-existente?propietario=${propietarioCreado.id}`;
+  `/pequenos-animales/paciente-existente?propietario=${propietarioCreado.id}`;
   }
 
   return (
     <main className="min-h-screen bg-[#F4F1EB] p-6">
 
-      <EquinosHeader titulo="Nuevo Propietario" />
+      <PequenosHeader titulo="Nuevo Propietario" />
 
 <div className="mb-8" />
 

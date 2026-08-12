@@ -28,44 +28,117 @@ type TerapiaSel = {
 };
 
 const [terapiasSeleccionadas, setTerapiasSeleccionadas] = useState<TerapiaSel[]>([]);
-function guardarBorradorSesion() {
-
+function guardarBorradorSesion(
+  terapiaId: string,
+  aplicacionIndex: number
+) {
   sessionStorage.setItem(
     "sesionBorrador",
-    JSON.stringify(terapiasSeleccionadas)
+    JSON.stringify({
+      terapias: terapiasSeleccionadas,
+      terapiaId,
+      aplicacionIndex,
+    })
   );
-
 }
 const [estructuras, setEstructuras] = useState<any[]>([]);
 const [valoresParametros, setValoresParametros] = useState<Record<string, string>>({});
 const [estructuraPorTerapia, setEstructuraPorTerapia] = useState<Record<string, string>>({});
 useEffect(() => {
-
   cargarLugares();
   cargarTerapias();
   cargarEstructuras();
-  cargarParametros();        
+  cargarParametros();
   cargarOpcionesParametros();
   cargarPesoPaciente();
   cargarProtocolos();
   cargarParametrosProtocolo();
 
-  const guardado = sessionStorage.getItem(
+  const guardado =
+    sessionStorage.getItem("sesionBorrador");
+
+  const estructuraNueva =
+    new URLSearchParams(window.location.search).get(
+      "estructura"
+    );
+
+  if (guardado) {
+  const borradorGuardado =
+    JSON.parse(guardado);
+
+  const terapiasGuardadas =
+    borradorGuardado.terapias;
+
+  const terapiaId =
+    borradorGuardado.terapiaId;
+
+  const aplicacionIndex =
+    borradorGuardado.aplicacionIndex;
+
+  if (estructuraNueva) {
+    const terapiasActualizadas =
+      terapiasGuardadas.map(
+        (terapia: any) => {
+
+          if (terapia.terapiaId !== terapiaId) {
+            return terapia;
+          }
+
+          return {
+            ...terapia,
+            aplicaciones:
+              terapia.aplicaciones.map(
+                (
+                  aplicacion: any,
+                  index: number
+                ) => {
+
+                  if (
+                    index !== aplicacionIndex
+                  ) {
+                    return aplicacion;
+                  }
+
+                  if (
+                    aplicacion.estructuras.includes(
+                      estructuraNueva
+                    )
+                  ) {
+                    return aplicacion;
+                  }
+
+                  return {
+                    ...aplicacion,
+                    estructuras: [
+                      ...aplicacion.estructuras,
+                      estructuraNueva,
+                    ],
+                  };
+                }
+              ),
+          };
+        }
+      );
+
+    setTerapiasSeleccionadas(
+      terapiasActualizadas
+    );
+  } else {
+    setTerapiasSeleccionadas(
+      terapiasGuardadas
+    );
+  }
+
+  sessionStorage.removeItem(
     "sesionBorrador"
   );
 
-  if (guardado) {
-
-    setTerapiasSeleccionadas(
-      JSON.parse(guardado)
-    );
-
-    sessionStorage.removeItem(
-      "sesionBorrador"
-    );
-
-  }
-
+  window.history.replaceState(
+    {},
+    "",
+    window.location.pathname
+  );
+}
 }, []);
 async function cargarLugares() {
   const { data, error } = await supabase
@@ -75,7 +148,22 @@ async function cargarLugares() {
   console.log("LUGARES:", data);
   console.log("ERROR:", error);
 
-  setLugares(data || []);
+  const lista = data || [];
+
+  setLugares(lista);
+
+  const ultimoLugar = localStorage.getItem("ultimoLugar");
+
+  if (ultimoLugar) {
+    const existe = lista.some(
+      (lugarItem: any) =>
+        lugarItem.Nombre === ultimoLugar
+    );
+
+    if (existe) {
+      setLugar(ultimoLugar);
+    }
+  }
 }
 async function cargarTerapias() {
   const { data, error } = await supabase
@@ -174,6 +262,7 @@ if (error) {
 
   return;
 }
+localStorage.setItem("ultimoLugar", lugar);
 console.log("SESION CREADA:", sesionCreada);
 for (const item of terapiasSeleccionadas) {
 
@@ -266,7 +355,20 @@ router.push(`/equinos/pacientes/${pacienteId}`);
 
 <select
   value={lugar}
-  onChange={(e) => setLugar(e.target.value)}
+  onChange={(e) => {
+    if (e.target.value === "__NUEVO_LUGAR__") {
+      const rutaActual = window.location.pathname;
+
+      window.location.href =
+        `/administracion/lugares/nueva?returnTo=${encodeURIComponent(
+          rutaActual
+        )}`;
+
+      return;
+    }
+
+    setLugar(e.target.value);
+  }}
   className="p-4 rounded-2xl border border-gray-300"
 >
   <option value="">
@@ -281,6 +383,10 @@ router.push(`/equinos/pacientes/${pacienteId}`);
       {lugarItem.Nombre}
     </option>
   ))}
+
+  <option value="__NUEVO_LUGAR__">
+    ➕ Agregar nuevo lugar
+  </option>
 </select>
 
           <div className="bg-gray-50 rounded-2xl p-4">
@@ -349,6 +455,13 @@ router.push(`/equinos/pacientes/${pacienteId}`);
   </div>
 
 </div>
+<textarea
+            rows={5}
+            placeholder="Evaluación de control"
+            value={observaciones}
+            onChange={(e) => setObservaciones(e.target.value)}
+            className="p-4 rounded-2xl border border-gray-300"
+          />
 <div className="bg-gray-50 rounded-2xl p-4">
 
   <p className="font-semibold mb-3">
@@ -443,13 +556,7 @@ router.push(`/equinos/pacientes/${pacienteId}`);
   })}
   </div>
 </div>
-          <textarea
-            rows={5}
-            placeholder="Observaciones"
-            value={observaciones}
-            onChange={(e) => setObservaciones(e.target.value)}
-            className="p-4 rounded-2xl border border-gray-300"
-          />
+          
                     <button
             onClick={guardarSesion}
             className="

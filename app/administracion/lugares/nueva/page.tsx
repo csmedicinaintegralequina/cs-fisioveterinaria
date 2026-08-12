@@ -2,51 +2,52 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import EquinosHeader from "@/app/components/EquinosHeader";
 
-export default function NuevaEstructura() {
-
+export default function NuevoLugar() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const returnTo = searchParams.get("returnTo");
 
   const [nombre, setNombre] = useState("");
 
   async function guardar() {
+    if (!nombre.trim()) {
+      alert("Ingresá el nombre del lugar");
+      return;
+    }
 
-    const { error } = await supabase
-      .from("Estructuras anatómicas")
+    const { data, error } = await supabase
+      .from("Lugares")
       .insert([
         {
-          Nombre: nombre,
+          Nombre: nombre.trim(),
         },
-      ]);
+      ])
+      .select()
+      .single();
 
     if (error) {
       alert(error.message);
       return;
     }
 
-   const params = new URLSearchParams(
-  window.location.search
-);
-
-const returnTo = params.get("returnTo");
-
-if (returnTo) {
-  router.push(
-    `${returnTo}?estructura=${encodeURIComponent(nombre)}`
-  );
-} else {
-  router.push("/administracion/estructuras");
-}
+    if (returnTo) {
+      router.push(
+        `${returnTo}?lugar=${encodeURIComponent(data.id)}`
+      );
+    } else {
+      router.push("/administracion/lugares");
+    }
   }
 
   return (
-
     <main className="min-h-screen bg-[#F4F1EB] p-6">
 
       <EquinosHeader
-        titulo="Nueva estructura"
+        titulo="Nuevo lugar de atención"
         subtitulo="Administración"
       />
 
@@ -81,7 +82,5 @@ if (returnTo) {
       </div>
 
     </main>
-
   );
-
 }

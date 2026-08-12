@@ -20,7 +20,10 @@ type Props = {
   aplicaciones: Aplicacion[];
   pesoPaciente?: string;
   onChange: (apps: Aplicacion[]) => void;
-  guardarBorrador: () => void;
+  guardarBorrador: (
+  terapiaId: string,
+  aplicacionIndex: number
+) => void;
   mostrarJeringas?: boolean;
 };
 
@@ -288,43 +291,73 @@ console.log(
   </select>
 
 </div>
-    <p className="mt-4 font-semibold">
+    <p className="mt-6 font-semibold">
       Estructuras anatómicas
     </p>
 
 
     <Select
-      isMulti
-      options={estructuras.map((estructura) => ({
-        value: estructura.Nombre,
-        label: estructura.Nombre,
-      }))}
+  isMulti
+  options={[
+    ...estructuras.map((estructura) => ({
+      value: estructura.Nombre,
+      label: estructura.Nombre,
+    })),
 
-      value={aplicacion.estructuras.map((e) => ({
-        value: e,
-        label: e,
-      }))}
+    {
+      value: "__NUEVA_ESTRUCTURA__",
+      label: "➕ Agregar nueva estructura",
+    },
+  ]}
 
+  value={aplicacion.estructuras.map((e) => ({
+    value: e,
+    label: e,
+  }))}
 
-      onChange={(selected) =>
-        onChange(
-          aplicaciones.map((app, i) =>
-            i === indice
-              ? {
-                  ...app,
-                  estructuras: selected
-                    ? selected.map(
-                        (s: any) => s.value
-                      )
-                    : [],
-                }
-              : app
-          )
-        )
-      }
+  onChange={(selected) => {
 
-      placeholder="Buscar estructuras..."
-    />
+    const seleccion = selected || [];
+
+    const quiereNuevaEstructura = seleccion.some(
+      (s: any) =>
+        s.value === "__NUEVA_ESTRUCTURA__"
+    );
+
+    if (quiereNuevaEstructura) {
+
+      guardarBorrador(
+  terapia.id,
+  indice
+);
+
+      const rutaActual =
+        window.location.pathname;
+
+      window.location.href =
+        `/administracion/estructuras/nueva?returnTo=${encodeURIComponent(
+          rutaActual
+        )}`;
+
+      return;
+    }
+
+    onChange(
+      aplicaciones.map((app, i) =>
+        i === indice
+          ? {
+              ...app,
+              estructuras: seleccion.map(
+                (s: any) => s.value
+              ),
+            }
+          : app
+      )
+    );
+  }}
+
+  placeholder="Buscar estructuras..."
+/>
 
   </>
 
@@ -371,7 +404,10 @@ console.log(
               value === "__NUEVA_OPCION__"
             ) {
 
-              guardarBorrador();
+              guardarBorrador(
+  terapia.id,
+  indice
+);
 
 
               window.location.href =

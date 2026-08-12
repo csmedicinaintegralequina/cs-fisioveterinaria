@@ -26,10 +26,17 @@ type TerapiaSel = {
   terapiaId: string;
   aplicaciones: any[];
 };
-function guardarBorradorSesion() {
+function guardarBorradorSesion(
+  terapiaId: string,
+  aplicacionIndex: number
+) {
   sessionStorage.setItem(
     "sesionBorrador",
-    JSON.stringify(terapiasSeleccionadas)
+    JSON.stringify({
+      terapias: terapiasSeleccionadas,
+      terapiaId,
+      aplicacionIndex,
+    })
   );
 }
 const [terapiasSeleccionadas, setTerapiasSeleccionadas] = useState<TerapiaSel[]>([]);
@@ -41,19 +48,98 @@ useEffect(() => {
   cargarLugares();
   cargarTerapias();
   cargarEstructuras();
-  cargarParametros();        
-  cargarOpcionesParametros(); 
-    cargarPaciente();
-    cargarProtocolos();
-cargarParametrosProtocolo();
+  cargarParametros();
+  cargarOpcionesParametros();
+  cargarPaciente();
+  cargarProtocolos();
+  cargarParametrosProtocolo();
 
-  const borrador = sessionStorage.getItem("sesionBorrador");
+  const borrador = sessionStorage.getItem(
+    "sesionBorrador"
+  );
 
-  if (borrador) {
-    setTerapiasSeleccionadas(JSON.parse(borrador));
-    sessionStorage.removeItem("sesionBorrador");
+  const estructuraNueva =
+    new URLSearchParams(window.location.search).get(
+      "estructura"
+    );
+
+ if (borrador) {
+  const borradorGuardado =
+    JSON.parse(borrador);
+
+  const terapiasGuardadas =
+    borradorGuardado.terapias;
+
+  const terapiaId =
+    borradorGuardado.terapiaId;
+
+  const aplicacionIndex =
+    borradorGuardado.aplicacionIndex;
+
+  if (estructuraNueva) {
+    const terapiasActualizadas =
+      terapiasGuardadas.map(
+        (terapia: any) => {
+
+          if (terapia.terapiaId !== terapiaId) {
+            return terapia;
+          }
+
+          return {
+            ...terapia,
+            aplicaciones:
+              terapia.aplicaciones.map(
+                (
+                  aplicacion: any,
+                  index: number
+                ) => {
+
+                  if (
+                    index !== aplicacionIndex
+                  ) {
+                    return aplicacion;
+                  }
+
+                  if (
+                    aplicacion.estructuras.includes(
+                      estructuraNueva
+                    )
+                  ) {
+                    return aplicacion;
+                  }
+
+                  return {
+                    ...aplicacion,
+                    estructuras: [
+                      ...aplicacion.estructuras,
+                      estructuraNueva,
+                    ],
+                  };
+                }
+              ),
+          };
+        }
+      );
+
+    setTerapiasSeleccionadas(
+      terapiasActualizadas
+    );
+  } else {
+    setTerapiasSeleccionadas(
+      terapiasGuardadas
+    );
   }
 
+  sessionStorage.removeItem(
+    "sesionBorrador"
+  );
+
+  window.history.replaceState(
+    {},
+    "",
+    window.location.pathname
+  );
+}
 }, []);
 async function cargarLugares() {
   const { data, error } = await supabase
@@ -63,7 +149,22 @@ async function cargarLugares() {
   console.log("LUGARES:", data);
   console.log("ERROR:", error);
 
-  setLugares(data || []);
+  const lista = data || [];
+
+  setLugares(lista);
+
+  const ultimoLugar = localStorage.getItem("ultimoLugar");
+
+  if (ultimoLugar) {
+    const existe = lista.some(
+      (lugarItem: any) =>
+        lugarItem.Nombre === ultimoLugar
+    );
+
+    if (existe) {
+      setLugar(ultimoLugar);
+    }
+  }
 }
 async function cargarTerapias() {
   const { data, error } = await supabase
@@ -177,6 +278,7 @@ if (error) {
 
   return;
 }
+localStorage.setItem("ultimoLugar", lugar);
 console.log("SESION CREADA:", sesionCreada);
 for (const item of terapiasSeleccionadas) {
 
@@ -269,7 +371,20 @@ router.push(`/pequenos-animales/pacientes/${pacienteId}`);
 
 <select
   value={lugar}
-  onChange={(e) => setLugar(e.target.value)}
+  onChange={(e) => {
+    if (e.target.value === "__NUEVO_LUGAR__") {
+      const rutaActual = window.location.pathname;
+
+      window.location.href =
+        `/administracion/lugares/nueva?returnTo=${encodeURIComponent(
+          rutaActual
+        )}`;
+
+      return;
+    }
+
+    setLugar(e.target.value);
+  }}
   className="p-4 rounded-2xl border border-gray-300"
 >
   <option value="">
@@ -284,6 +399,10 @@ router.push(`/pequenos-animales/pacientes/${pacienteId}`);
       {lugarItem.Nombre}
     </option>
   ))}
+
+  <option value="__NUEVO_LUGAR__">
+    ➕ Agregar nuevo lugar
+  </option>
 </select>
 
           <div className="bg-gray-50 rounded-2xl p-4">

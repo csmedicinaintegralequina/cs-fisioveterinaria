@@ -8,12 +8,14 @@ type Props = {
   modo: "nuevo" | "editar";
   especieInicial: "Equino" | "Canino" | "Felino";
   pacienteId?: string;
+  propietarioInicial?: string;
 };
 
 export default function PacienteForm({
   modo,
   especieInicial,
   pacienteId,
+  propietarioInicial,
 }: Props) {
 const router = useRouter();
   const [propietarios, setPropietarios] = useState<any[]>([]);
@@ -87,14 +89,28 @@ const [previewFoto, setPreviewFoto] = useState("");
 
   async function cargarPropietarios() {
 
-    const { data } = await supabase
-      .from("Propietarios")
-      .select("*")
-      .order("Nombre y Apellido");
+  const { data } = await supabase
+    .from("Propietarios")
+    .select("*")
+    .order("Nombre y Apellido");
 
-    setPropietarios(data || []);
+  const lista = data || [];
 
+  setPropietarios(lista);
+
+  if (propietarioInicial) {
+    const propietario = lista.find(
+      (p: any) => String(p.id) === String(propietarioInicial)
+    );
+
+    if (propietario) {
+      setPropietarioId(String(propietario.id));
+      setNombrePropietarioSeleccionado(
+        propietario["Nombre y Apellido"]
+      );
+    }
   }
+}
 
   async function cargarLugares() {
 

@@ -34,6 +34,19 @@ const [opcionesParametros, setOpcionesParametros] = useState<any[]>([]);
 const [valoresParametros, setValoresParametros] = useState<any>({});
 const [estructuras, setEstructuras] = useState<any[]>([]);
 const [estructuraPorTerapia, setEstructuraPorTerapia] = useState<Record<string, string>>({});
+function guardarBorradorSesion(
+  terapiaId: string,
+  aplicacionIndex: number
+) {
+  sessionStorage.setItem(
+    "sesionBorrador",
+    JSON.stringify({
+      terapias: terapiasSeleccionadas,
+      terapiaId,
+      aplicacionIndex,
+    })
+  );
+}
 useEffect(() => {
   cargarLugares();
   cargarTerapias();
@@ -45,7 +58,95 @@ useEffect(() => {
   cargarParametrosSesion();
   cargarPaciente();
   cargarProtocolos();
-cargarParametrosProtocolo();
+  cargarParametrosProtocolo();
+
+  const borrador =
+    sessionStorage.getItem("sesionBorrador");
+
+  const estructuraNueva =
+    new URLSearchParams(window.location.search).get(
+      "estructura"
+    );
+
+  if (borrador) {
+    const borradorGuardado =
+      JSON.parse(borrador);
+
+    const terapiasGuardadas =
+      borradorGuardado.terapias;
+
+    const terapiaId =
+      borradorGuardado.terapiaId;
+
+    const aplicacionIndex =
+      borradorGuardado.aplicacionIndex;
+
+    if (estructuraNueva) {
+      const terapiasActualizadas =
+        terapiasGuardadas.map(
+          (terapia: any) => {
+
+            if (
+              terapia.terapiaId !== terapiaId
+            ) {
+              return terapia;
+            }
+
+            return {
+              ...terapia,
+              aplicaciones:
+                terapia.aplicaciones.map(
+                  (
+                    aplicacion: any,
+                    index: number
+                  ) => {
+
+                    if (
+                      index !== aplicacionIndex
+                    ) {
+                      return aplicacion;
+                    }
+
+                    if (
+                      aplicacion.estructuras.includes(
+                        estructuraNueva
+                      )
+                    ) {
+                      return aplicacion;
+                    }
+
+                    return {
+                      ...aplicacion,
+                      estructuras: [
+                        ...aplicacion.estructuras,
+                        estructuraNueva,
+                      ],
+                    };
+                  }
+                ),
+            };
+          }
+        );
+
+      setTerapiasSeleccionadas(
+        terapiasActualizadas
+      );
+    } else {
+      setTerapiasSeleccionadas(
+        terapiasGuardadas
+      );
+    }
+
+    sessionStorage.removeItem(
+      "sesionBorrador"
+    );
+
+    window.history.replaceState(
+      {},
+      "",
+      window.location.pathname
+    );
+  }
 }, []);
 async function cargarSesion() {
 
@@ -59,10 +160,28 @@ async function cargarSesion() {
 
   setFechaSesion(data["Fecha de sesión"]);
   setVeterinario(data["Veterinario actuante"] || "");
-  setLugar(data["Lugar de atención"] || "");
+
+  const lugarNuevoId =
+    new URLSearchParams(window.location.search).get("lugar");
+
+  if (lugarNuevoId) {
+    const { data: lugarNuevo } = await supabase
+      .from("Lugares")
+      .select("Nombre")
+      .eq("id", lugarNuevoId)
+      .single();
+
+    if (lugarNuevo) {
+      setLugar(lugarNuevo.Nombre);
+    } else {
+      setLugar(data["Lugar de atención"] || "");
+    }
+  } else {
+    setLugar(data["Lugar de atención"] || "");
+  }
+
   setEvolucion(data.Evolución || "3");
   setObservaciones(data.Observaciones || "");
-
 }
 async function cargarTerapiasSesion() {
 
@@ -434,7 +553,20 @@ router.push(`/pequenos-animales/pacientes/${pacienteId}`);
 
 <select
   value={lugar}
-  onChange={(e) => setLugar(e.target.value)}
+  onChange={(e) => {
+    if (e.target.value === "__NUEVO_LUGAR__") {
+      const rutaActual = window.location.pathname;
+
+      window.location.href =
+        `/administracion/lugares/nueva?returnTo=${encodeURIComponent(
+          rutaActual
+        )}`;
+
+      return;
+    }
+
+    setLugar(e.target.value);
+  }}
   className="p-4 rounded-2xl border border-gray-300"
 >
   <option value="">
@@ -449,6 +581,10 @@ router.push(`/pequenos-animales/pacientes/${pacienteId}`);
       {lugarItem.Nombre}
     </option>
   ))}
+
+  <option value="__NUEVO_LUGAR__">
+    ➕ Agregar nuevo lugar
+  </option>
 </select>
 
           <div className="bg-gray-50 rounded-2xl p-4">
@@ -590,6 +726,7 @@ router.push(`/pequenos-animales/pacientes/${pacienteId}`);
                 pesoPaciente={pesoPaciente}
                 protocolos={protocolos}
 parametrosProtocolo={parametrosProtocolo}
+
                 aplicaciones={
                   terapiasSeleccionadas.find(
                     (t) =>
@@ -611,7 +748,7 @@ parametrosProtocolo={parametrosProtocolo}
                   )
                 }
 
-                guardarBorrador={() => {}}
+                guardarBorrador={guardarBorradorSesion}
 
               />
 
