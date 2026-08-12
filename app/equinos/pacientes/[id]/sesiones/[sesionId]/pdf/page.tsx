@@ -131,22 +131,22 @@ return (
 {/* ENCABEZADO */}
 
 <header
-className="
-text-center
-border-b-2
-border-[#0B6A74]
-pb-2
-"
+  className="
+    text-center
+    border-b-2
+    border-[#0B6A74]
+    pb-3
+  "
 >
-
-<Image
-  src="/pdf/logocs.png"
-  alt="Logo Medicina Integral Equina"
-  width={190}
-  height={95}
-  className="mx-auto object-contain"
-/>
-
+  <div className="flex justify-center items-center h-[95px] w-full overflow-visible">
+    <Image
+      src="/pdf/logocs.png"
+      alt="Logo Medicina Integral Equina"
+      width={210}
+      height={95}
+      className="max-h-[95px] w-auto object-contain"
+    />
+  </div>
 
 <h1
 className="
@@ -292,7 +292,7 @@ text-sm
 
 <div
 className="
-text-[11px]
+text-[13px]
 text-gray-600
 mt-1
 "
@@ -307,7 +307,7 @@ mt-1
 
 <div
 className="
-text-[10px]
+text-[12px]
 italic
 text-gray-500
 mt-1
@@ -356,14 +356,14 @@ className="
 border-t
 mt-0
 pt-1
-text-[9px]
+text-[11px]
 font-semibold
 "
 >
 M.V. Josefina Chayer
 </p>
 
-<p className="text-[9px]">
+<p className="text-[10px]">
 MP 16.214
 </p>
 
@@ -391,14 +391,14 @@ className="
 border-t
 mt-0
 pt-1
-text-[9px]
+text-[11px]
 font-semibold
 "
 >
 M.V. Florencia Solano
 </p>
 
-<p className="text-[9px]">
+<p className="text-[10px]">
 MP 16.352
 </p>
 
@@ -427,14 +427,14 @@ className="
 border-t
 mt-0
 pt-1
-text-[9px]
+text-[11px]
 font-semibold
 "
 >
 M.V. Martín Gerez
 </p>
 
-<p className="text-[9px]">
+<p className="text-[10px]">
 MP 16.511
 </p>
 </div>
