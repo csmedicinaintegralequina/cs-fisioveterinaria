@@ -138,7 +138,7 @@ return (
     pb-3
   "
 >
-  <div className="flex justify-center items-center h-[95px] w-full overflow-visible">
+  <div className="flex justify-center items-center h-[95px] w-full px-4">
     <Image
       src="/pdf/logocs.png"
       alt="Logo Medicina Integral Equina"
