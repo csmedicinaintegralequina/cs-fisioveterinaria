@@ -76,7 +76,30 @@ console.log("TERAPIAS:", sesionesTerapias);
 return (
 
   <>
-  
+  <style>{`
+  .pdf-hoja {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 18mm 16mm;
+    background: white;
+    box-sizing: border-box;
+  }
+
+  @media print {
+    body {
+      background: white;
+    }
+
+    .pdf-hoja {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0;
+      padding: 18mm 16mm;
+      box-shadow: none;
+      page-break-after: always;
+    }
+  }
+`}</style>
     <div className="flex justify-end mb-6">
       <BotonDescargarPDF
         nombrePaciente={paciente?.Nombre}
@@ -85,17 +108,26 @@ return (
     </div>
 
 
-    <div id="contenido-pdf">
+    <div
+  id="contenido-pdf"
+  className="
+    flex
+    flex-col
+    items-center
+    gap-8
+    py-8
+  "
+>
 
-      <main
-        className="
-        bg-white
-        max-w-xl
-        mx-auto
-        p-3
-        text-gray-800
-        "
-      >
+  <main
+    className="
+      pdf-hoja
+      bg-white
+      text-gray-800
+      shadow-lg
+      box-border
+    "
+  >
 {/* ENCABEZADO */}
 
 <header

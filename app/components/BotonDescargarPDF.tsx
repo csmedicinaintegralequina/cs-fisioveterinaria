@@ -14,140 +14,70 @@ export default function BotonDescargarPDF({
 }: Props) {
 
   async function descargarPDF() {
-    const elemento = document.getElementById("contenido-pdf");
+  const hojas = document.querySelectorAll(".pdf-hoja");
 
-    if (!elemento) {
-      console.error("No se encontró contenido-pdf");
-      return;
-    }
+  if (!hojas.length) {
+    console.error("No se encontraron hojas PDF");
+    return;
+  }
 
-    const canvas = await html2canvas(elemento, {
-  scale: 1.2,
-  useCORS: true,
-  backgroundColor: "#ffffff",
+  const pdf = new jsPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: "a4",
+  });
 
-  onclone: (documento) => {
+  for (let i = 0; i < hojas.length; i++) {
+    const hoja = hojas[i] as HTMLElement;
 
-    const estilos =
-      documento.querySelectorAll("*");
+    const canvas = await html2canvas(hoja, {
+      scale: 1.5,
+      useCORS: true,
+      backgroundColor: "#ffffff",
 
-    estilos.forEach((el: any) => {
+      onclone: (documento) => {
+        const estilos = documento.querySelectorAll("*");
 
-      const estilo =
-        window.getComputedStyle(el);
+        estilos.forEach((el: any) => {
+          const estilo = window.getComputedStyle(el);
 
-      if (estilo.color.includes("lab")) {
-        el.style.color = "#333333";
-      }
+          if (estilo.color.includes("lab")) {
+            el.style.color = "#333333";
+          }
 
-      if (estilo.backgroundColor.includes("lab")) {
-        el.style.backgroundColor = "#ffffff";
-      }
+          if (estilo.backgroundColor.includes("lab")) {
+            el.style.backgroundColor = "#ffffff";
+          }
 
-      if (estilo.borderColor.includes("lab")) {
-        el.style.borderColor = "#dddddd";
-      }
-
+          if (estilo.borderColor.includes("lab")) {
+            el.style.borderColor = "#dddddd";
+          }
+        });
+      },
     });
-
-  },
-});
 
     const imgData = canvas.toDataURL("image/jpeg", 0.95);
 
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "mm",
-      format: "a4",
-    });
-
-
-
-
-
-const margen = 10;
-
-const anchoDisponible =
-  210 - margen * 2;
-
-const altoDisponible =
-  297 - margen * 2;
-
-
-const proporcion =
-  canvas.height / canvas.width;
-
-
-const anchoImagen = anchoDisponible;
-
-const altoImagen =
-  anchoImagen * proporcion;
-
-
-// Si entra en una hoja
-if (altoImagen <= altoDisponible) {
-
-  pdf.addImage(
-    imgData,
-    "JPEG",
-    margen,
-    margen,
-    anchoImagen,
-    altoImagen
-  );
-
-} else {
-
-  let alturaRestante = altoImagen;
-  let posicionY = margen;
-
-
-  pdf.addImage(
-    imgData,
-    "JPEG",
-    margen,
-    posicionY,
-    anchoImagen,
-    altoImagen
-  );
-
-
-  alturaRestante -= altoDisponible;
-
-
-  while (alturaRestante > 0) {
-
-    pdf.addPage();
-
-    posicionY = margen;
+    if (i > 0) {
+      pdf.addPage();
+    }
 
     pdf.addImage(
       imgData,
       "JPEG",
-      margen,
-      posicionY - altoDisponible,
-      anchoImagen,
-      altoImagen
+      0,
+      0,
+      210,
+      297
     );
-
-
-    alturaRestante -= altoDisponible;
-
   }
 
+  const nombreArchivo =
+    `${nombrePaciente} - Informe ${fecha || "sesion"}.pdf`
+      .replaceAll("/", "-");
+
+  pdf.save(nombreArchivo);
 }
-
-
-
-
-    const nombreArchivo =
-      `${nombrePaciente} - Informe ${fecha || "sesion"}.pdf`
-        .replaceAll("/", "-");
-
-
-    pdf.save(nombreArchivo);
-
-  }
 
 
   return (
