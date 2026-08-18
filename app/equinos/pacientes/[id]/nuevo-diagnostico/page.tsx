@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 export default function NuevoDiagnostico() {
   const params = useParams();
-
+const router = useRouter();
   const pacienteId = params.id as string;
 
   const [diagnosticos, setDiagnosticos] = useState<any[]>([]);
@@ -62,12 +62,7 @@ export default function NuevoDiagnostico() {
 
     alert("Diagnóstico guardado");
 
-    setDiagnosticoId("");
-    setEstructuraId("");
-    setMiembro("");
-    setCara("");
-    setNivel("");
-    setObservaciones("");
+router.push(`/equinos/pacientes/${pacienteId}`);
   }
 
   return (

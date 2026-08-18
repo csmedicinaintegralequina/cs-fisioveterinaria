@@ -38,6 +38,10 @@ function guardarBorradorSesion(
       terapias: terapiasSeleccionadas,
       terapiaId,
       aplicacionIndex,
+      veterinario,
+      lugar,
+      evolucion,
+      observaciones,
     })
   );
 }
@@ -74,6 +78,32 @@ useEffect(() => {
 
   const aplicacionIndex =
     borradorGuardado.aplicacionIndex;
+const veterinarioGuardado =
+  borradorGuardado.veterinario;
+
+const lugarGuardado =
+  borradorGuardado.lugar;
+
+const evolucionGuardada =
+  borradorGuardado.evolucion;
+
+const observacionesGuardadas =
+  borradorGuardado.observaciones;
+if (veterinarioGuardado !== undefined) {
+  setVeterinario(veterinarioGuardado);
+}
+
+if (lugarGuardado !== undefined) {
+  setLugar(lugarGuardado);
+}
+
+if (evolucionGuardada !== undefined) {
+  setEvolucion(evolucionGuardada);
+}
+
+if (observacionesGuardadas !== undefined) {
+  setObservaciones(observacionesGuardadas);
+}
 
   if (estructuraNueva) {
     const terapiasActualizadas =

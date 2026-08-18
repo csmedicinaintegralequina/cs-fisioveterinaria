@@ -27,6 +27,7 @@ const [nombrePropietarioSeleccionado, setNombrePropietarioSeleccionado] = useSta
   const [nombre, setNombre] = useState("");
   const [especie, setEspecie] = useState(especieInicial);
   const [raza, setRaza] = useState("");
+  const [razas, setRazas] = useState<any[]>([]);
   const [sexo, setSexo] = useState("Macho");
   const [castrado, setCastrado] = useState(false);
 
@@ -86,7 +87,53 @@ const [previewFoto, setPreviewFoto] = useState("");
   }
 
 }, [modo, pacienteId]);
+useEffect(() => {
+  const borrador = sessionStorage.getItem(
+    "pacienteFormBorrador"
+  );
 
+  if (!borrador) return;
+
+  const datos = JSON.parse(borrador);
+
+  setPropietarioId(datos.propietarioId || "");
+  setBusquedaPropietario(
+    datos.busquedaPropietario || ""
+  );
+  setNombrePropietarioSeleccionado(
+    datos.nombrePropietarioSeleccionado || ""
+  );
+  setNombre(datos.nombre || "");
+  setEspecie(datos.especie || especieInicial);
+  setRaza(datos.raza || "");
+  setSexo(datos.sexo || "Macho");
+  setCastrado(datos.castrado || false);
+  setFechaNacimiento(
+    datos.fechaNacimiento || ""
+  );
+  setEdad(datos.edad || "");
+  setPeso(datos.peso || "");
+  setColor(datos.color || "");
+  setVeterinarioDerivante(
+    datos.veterinarioDerivante || ""
+  );
+  setLugarHabitual(
+    datos.lugarHabitual || ""
+  );
+  setEstado(datos.estado || "Activo");
+  setTipoTratamiento(
+    datos.tipoTratamiento || "Rehabilitación"
+  );
+  setFotoUrl(datos.fotoUrl || "");
+
+  sessionStorage.removeItem(
+    "pacienteFormBorrador"
+  );
+}, []);
+
+useEffect(() => {
+  cargarRazas();
+}, [especie]);
   async function cargarPropietarios() {
 
   const { data } = await supabase
@@ -122,7 +169,20 @@ const [previewFoto, setPreviewFoto] = useState("");
     setLugares(data || []);
 
   }
+async function cargarRazas() {
+  const { data, error } = await supabase
+    .from("Razas")
+    .select("*")
+    .eq("Especie", especie)
+    .order("Nombre");
 
+  if (error) {
+    console.log("ERROR RAZAS:", error);
+    return;
+  }
+
+  setRazas(data || []);
+}
 async function cargarPaciente() {
 
   console.log("ENTRO A CARGAR PACIENTE", pacienteId);
@@ -389,15 +449,62 @@ if (especie === "Equino") {
 <option>Otro</option>
 
 </select>
-<input
-  type="text"
-  placeholder="Raza"
+<select
   value={raza}
-  onChange={(e) =>
-    setRaza(e.target.value)
-  }
+  onChange={(e) => {
+    if (e.target.value === "__NUEVA_RAZA__") {
+      sessionStorage.setItem(
+        "pacienteFormBorrador",
+        JSON.stringify({
+          propietarioId,
+          busquedaPropietario,
+          nombrePropietarioSeleccionado,
+          nombre,
+          especie,
+          raza,
+          sexo,
+          castrado,
+          fechaNacimiento,
+          edad,
+          peso,
+          color,
+          veterinarioDerivante,
+          lugarHabitual,
+          estado,
+          tipoTratamiento,
+          fotoUrl,
+          returnUrl: window.location.pathname,
+        })
+      );
+
+      router.push(
+        `/administracion/razas?volver=paciente`
+      );
+
+      return;
+    }
+
+    setRaza(e.target.value);
+  }}
   className="p-3 rounded-xl border border-gray-300"
-/>
+>
+  <option value="">
+    Seleccionar raza
+  </option>
+
+  {razas.map((razaItem) => (
+    <option
+      key={razaItem.id}
+      value={razaItem.Nombre}
+    >
+      {razaItem.Nombre}
+    </option>
+  ))}
+
+  <option value="__NUEVA_RAZA__">
+    ➕ Agregar nueva raza
+  </option>
+</select>
 </div>
 <div className="grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
 <select
