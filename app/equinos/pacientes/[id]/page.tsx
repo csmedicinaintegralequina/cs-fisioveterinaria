@@ -44,7 +44,7 @@ const { data: estructuras } = await supabase
   .select("*")
   .eq("Paciente id", id)
   .order("Fecha de sesión", {
-    ascending: true,
+    ascending: false,
   });
   const { data: sesionesTerapias } = await supabase
   .from("Sesión terapias")
@@ -455,30 +455,28 @@ py-3 md:py-4
 
     <div className="grid gap-3">
 
-{sesiones.map((sesion) => (
+{sesiones.map((sesion, indice) => (
 
-  <a
-    href={`/equinos/pacientes/${id}/sesiones/${sesion.id}`}
-    key={sesion.id}
-    className="
-      block
-      border
-      rounded-2xl
-      p-4
-      hover:bg-gray-50
-      transition-all
-      shadow-sm
-    "
-  >
+  <div
+  key={sesion.id}
+  className="
+    block
+    border
+    rounded-2xl
+    p-4
+    hover:bg-gray-50
+    transition-all
+    shadow-sm
+  "
+>
 
     <div>
-
- <strong>
-  {formatearFecha(
-    sesion["Fecha de sesión"]
-  )}
-</strong>
-
+  <strong>
+    Sesión {sesiones.length - indice} ·{" "}
+    {formatearFecha(
+      sesion["Fecha de sesión"]
+    )}
+  </strong>
 </div>
 <div className="mt-3 text-sm">
 
@@ -625,7 +623,7 @@ py-3 md:py-4
   📄 PDF
 </a>
 </div>
-  </a>
+</div>
 
 ))}
 
@@ -650,7 +648,7 @@ py-3 md:py-4
 
     <div className="space-y-4">
 
-      {sesiones.map((sesion) => (
+      {sesiones.map((sesion, indice) => (
 
         <div
           key={sesion.id}

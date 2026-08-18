@@ -11,7 +11,7 @@ export default function NuevaSesion() {
 const router = useRouter();
   const pacienteId = params.id as string;
 const [pesoPaciente, setPesoPaciente] = useState("");
-const fechaSesion = new Date().toISOString().split("T")[0];
+const fechaSesion = new Date().toLocaleDateString("en-CA");
   const [veterinario, setVeterinario] = useState("");
   const [lugar, setLugar] = useState("");
   const [evolucion, setEvolucion] = useState("3");
@@ -240,7 +240,12 @@ async function cargarPesoPaciente() {
 }
 async function guardarSesion() {
   console.log("BOTON FUNCIONA");
+const { count } = await supabase
+  .from("Sesiones")
+  .select("*", { count: "exact", head: true })
+  .eq("Paciente id", pacienteId);
 
+const numeroSesion = (count || 0) + 1;
 const { data: sesionCreada, error } =
   await supabase
     .from("Sesiones")
@@ -264,6 +269,11 @@ if (error) {
 }
 localStorage.setItem("ultimoLugar", lugar);
 console.log("SESION CREADA:", sesionCreada);
+console.log("NUMERO SESION CALCULADO:", numeroSesion);
+console.log(
+  "NUMERO SESION GUARDADO:",
+  sesionCreada?.["Número de sesión"]
+);
 for (const item of terapiasSeleccionadas) {
 
   for (const aplicacion of item.aplicaciones) {
@@ -279,6 +289,7 @@ for (const item of terapiasSeleccionadas) {
               aplicacion.estructuras.join(", "),
             Observaciones:
               aplicacion.observaciones,
+              "Número de sesión": numeroSesion,
           },
         ])
         .select()

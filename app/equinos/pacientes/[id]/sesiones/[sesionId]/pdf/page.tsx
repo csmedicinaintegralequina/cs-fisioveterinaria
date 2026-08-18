@@ -23,7 +23,20 @@ export default async function PDFSesion({
     .eq("id", sesionId)
     .single();
 
+const { data: todasLasSesiones } = await supabase
+  .from("Sesiones")
+  .select("*")
+  .eq("Paciente id", id)
+  .order("Fecha de sesión", {
+    ascending: true,
+  });
 
+const numeroSesion =
+  todasLasSesiones
+    ? todasLasSesiones.findIndex(
+        (s: any) => s.id === sesionId
+      ) + 1
+    : null;
 
   // Paciente
 
@@ -192,7 +205,7 @@ gap-2
 
 
 <p className="text-sm">
-<b>Sesión Nº:</b> {sesion?.["Número de sesión"] || "-"}
+  <b>Sesión Nº:</b> {numeroSesion || "-"}
 </p>
 
 

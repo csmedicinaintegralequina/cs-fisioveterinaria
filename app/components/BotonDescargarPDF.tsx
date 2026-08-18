@@ -36,24 +36,39 @@ export default function BotonDescargarPDF({
       backgroundColor: "#ffffff",
 
       onclone: (documento) => {
-        const estilos = documento.querySelectorAll("*");
+  const estilos = documento.querySelectorAll("*");
 
-        estilos.forEach((el: any) => {
-          const estilo = window.getComputedStyle(el);
+  estilos.forEach((el: any) => {
+    const estilo = window.getComputedStyle(el);
 
-          if (estilo.color.includes("lab")) {
-            el.style.color = "#333333";
-          }
+    if (estilo.color.includes("lab")) {
+      el.style.color = "#333333";
+    }
 
-          if (estilo.backgroundColor.includes("lab")) {
-            el.style.backgroundColor = "#ffffff";
-          }
+    if (estilo.backgroundColor.includes("lab")) {
+      el.style.backgroundColor = "#ffffff";
+    }
 
-          if (estilo.borderColor.includes("lab")) {
-            el.style.borderColor = "#dddddd";
-          }
-        });
-      },
+    if (estilo.borderColor.includes("lab")) {
+      el.style.borderColor = "#dddddd";
+    }
+  });
+
+  // Corregir tamaño del logo al generar el PDF
+  const logos = documento.querySelectorAll(
+    'img[src*="logocs"]'
+  );
+
+  logos.forEach((logo: any) => {
+    logo.style.width = "210px";
+    logo.style.height = "auto";
+    logo.style.maxWidth = "210px";
+    logo.style.maxHeight = "95px";
+    logo.style.objectFit = "contain";
+    logo.style.display = "block";
+    logo.style.margin = "0 auto";
+  });
+},
     });
 
     const imgData = canvas.toDataURL("image/jpeg", 0.95);
