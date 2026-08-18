@@ -129,6 +129,8 @@ export default function EditarDiagnostico() {
             <option>Anterior Izquierdo</option>
             <option>Posterior Derecho</option>
             <option>Posterior Izquierdo</option>
+            <option>Anteriores Bilateral</option>
+              <option>Posteriores Bilateral</option>
           </select>
                     <select
             value={cara}

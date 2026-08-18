@@ -152,13 +152,19 @@ return (
   "
 >
   <div className="flex justify-center items-center h-[95px] w-full px-4">
-    <Image
-      src="/pdf/logocs.png"
-      alt="Logo Medicina Integral Equina"
-      width={210}
-      height={95}
-      className="w-auto max-w–full max-h-[95px] object-contain"
-    />
+    <img
+  src="/pdf/logocs.png"
+  alt="Logo Medicina Integral Equina"
+  width={210}
+  height={95}
+  style={{
+    width: "210px",
+    height: "95px",
+    objectFit: "contain",
+    display: "block",
+    margin: "0 auto",
+  }}
+/>
   </div>
 
 <h1
