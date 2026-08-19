@@ -1,10 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import {
+  useEffect,
+  useState,
+  Suspense,
+} from "react";
+
+import {
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
+
 import { supabase } from "@/lib/supabase";
 
-export default function EliminarProtocolo() {
+
+function EliminarProtocoloContenido() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -13,6 +23,7 @@ export default function EliminarProtocolo() {
 
   const [protocolo, setProtocolo] = useState<any>(null);
   const [cargando, setCargando] = useState(true);
+
 
   useEffect(() => {
 
@@ -37,7 +48,9 @@ export default function EliminarProtocolo() {
       .single();
 
     if (error) {
+
       console.log("ERROR:", error);
+
       return;
     }
 
@@ -65,7 +78,10 @@ export default function EliminarProtocolo() {
 
     if (error) {
 
-      console.log("ERROR ELIMINANDO:", error);
+      console.log(
+        "ERROR ELIMINANDO:",
+        error
+      );
 
       alert(
         "No se pudo eliminar el protocolo. Puede tener parámetros asociados."
@@ -77,7 +93,9 @@ export default function EliminarProtocolo() {
 
     alert("Protocolo eliminado");
 
-    router.push("/administracion/protocolos");
+    router.push(
+      "/administracion/protocolos"
+    );
   }
 
 
@@ -104,21 +122,25 @@ export default function EliminarProtocolo() {
 
     <main className="min-h-screen bg-[#F4F1EB] p-6">
 
-      <div className="
-        max-w-3xl
-        mx-auto
-        bg-white
-        rounded-3xl
-        shadow-xl
-        p-8
-      ">
+      <div
+        className="
+          max-w-3xl
+          mx-auto
+          bg-white
+          rounded-3xl
+          shadow-xl
+          p-8
+        "
+      >
 
-        <h1 className="
-          text-2xl
-          font-bold
-          text-red-600
-          mb-6
-        ">
+        <h1
+          className="
+            text-2xl
+            font-bold
+            text-red-600
+            mb-6
+          "
+        >
           🗑️ Eliminar protocolo
         </h1>
 
@@ -128,24 +150,29 @@ export default function EliminarProtocolo() {
         </p>
 
 
-        <div className="
-          bg-gray-50
-          rounded-2xl
-          p-5
-          mb-6
-        ">
+        <div
+          className="
+            bg-gray-50
+            rounded-2xl
+            p-5
+            mb-6
+          "
+        >
 
-          <p className="
-            font-bold
-            text-[#0B6A74]
-            text-lg
-          ">
+          <p
+            className="
+              font-bold
+              text-[#0B6A74]
+              text-lg
+            "
+          >
             {protocolo?.Nombre}
           </p>
 
 
           <p className="text-gray-500 mt-1">
-            Terapia: {protocolo?.Terapias?.Nombre || "-"}
+            Terapia:{" "}
+            {protocolo?.Terapias?.Nombre || "-"}
           </p>
 
         </div>
@@ -155,7 +182,9 @@ export default function EliminarProtocolo() {
 
           <button
             onClick={() =>
-              router.push("/administracion/protocolos")
+              router.push(
+                "/administracion/protocolos"
+              )
             }
             className="
               flex-1
@@ -187,9 +216,38 @@ export default function EliminarProtocolo() {
 
         </div>
 
+
       </div>
 
     </main>
+
+  );
+}
+
+
+export default function EliminarProtocolo() {
+
+  return (
+
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-[#F4F1EB] p-6">
+
+          <div className="max-w-3xl mx-auto">
+
+            <p className="text-gray-500">
+              Cargando...
+            </p>
+
+          </div>
+
+        </main>
+      }
+    >
+
+      <EliminarProtocoloContenido />
+
+    </Suspense>
 
   );
 }
