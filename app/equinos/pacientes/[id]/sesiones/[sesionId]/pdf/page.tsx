@@ -22,21 +22,14 @@ export default async function PDFSesion({
     .select("*")
     .eq("id", sesionId)
     .single();
-
-const { data: todasLasSesiones } = await supabase
-  .from("Sesiones")
-  .select("*")
-  .eq("Paciente id", id)
-  .order("Fecha de sesión", {
-    ascending: true,
-  });
+    console.log("SESION PDF:", sesion);
+console.log(
+  "NUMERO SESION PDF:",
+  sesion?.["Número de sesión"]
+);
 
 const numeroSesion =
-  todasLasSesiones
-    ? todasLasSesiones.findIndex(
-        (s: any) => s.id === sesionId
-      ) + 1
-    : null;
+  sesion?.["Número de sesión"] ?? null;
 
   // Paciente
 
@@ -55,15 +48,21 @@ const numeroSesion =
 
 if (paciente) {
 
-  const { data } = await supabase
+  console.log(
+    "ID PROPIETARIO DEL PACIENTE:",
+    paciente["propietario id"]
+  );
+
+  const { data, error } = await supabase
     .from("Propietarios")
     .select("*")
     .eq("id", paciente["propietario id"])
     .single();
 
+  console.log("PROPIETARIO EN PDF:", data);
+  console.log("ERROR PROPIETARIO PDF:", error);
 
   propietario = data;
-
 }
 
 
@@ -201,7 +200,7 @@ gap-2
 
 
 <p className="text-sm">
-<b>Propietario:</b> {propietario?.Nombre}
+  <b>Propietario:</b> {propietario?.["Nombre y Apellido"]}
 </p>
 
 

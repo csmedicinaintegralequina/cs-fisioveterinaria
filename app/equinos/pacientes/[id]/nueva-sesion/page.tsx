@@ -11,12 +11,17 @@ export default function NuevaSesion() {
 const router = useRouter();
   const pacienteId = params.id as string;
 const [pesoPaciente, setPesoPaciente] = useState("");
-const fechaSesion = new Date().toLocaleDateString("en-CA");
+const [numeroSesion, setNumeroSesion] = useState(1);
+const [fechaSesion, setFechaSesion] =
+  useState(
+    new Date().toLocaleDateString("en-CA")
+  );
   const [veterinario, setVeterinario] = useState("");
   const [lugar, setLugar] = useState("");
   const [evolucion, setEvolucion] = useState("3");
   const [observaciones, setObservaciones] = useState("");
   const [lugares, setLugares] = useState<any[]>([]);
+  const [veterinarios, setVeterinarios] = useState<any[]>([]);
   const [terapias, setTerapias] = useState<any[]>([]);
   const [parametros, setParametros] = useState<any[]>([]);
 const [opcionesParametros, setOpcionesParametros] = useState<any[]>([]);
@@ -50,11 +55,13 @@ const [valoresParametros, setValoresParametros] = useState<Record<string, string
 const [estructuraPorTerapia, setEstructuraPorTerapia] = useState<Record<string, string>>({});
 useEffect(() => {
   cargarLugares();
+  cargarVeterinarios();
   cargarTerapias();
   cargarEstructuras();
   cargarParametros();
   cargarOpcionesParametros();
   cargarPesoPaciente();
+  cargarNumeroSesion();
   cargarProtocolos();
   cargarParametrosProtocolo();
 
@@ -195,6 +202,16 @@ async function cargarLugares() {
     }
   }
 }
+async function cargarVeterinarios() {
+  const { data, error } = await supabase
+    .from("Veterinarios")
+    .select("*");
+
+  console.log("VETERINARIOS:", data);
+  console.log("ERROR VETERINARIOS:", error);
+
+  setVeterinarios(data || []);
+}
 async function cargarTerapias() {
   const { data, error } = await supabase
     .from("Terapias")
@@ -268,14 +285,48 @@ async function cargarPesoPaciente() {
     setPesoPaciente(data.Peso?.toString() || "");
   }
 }
+async function cargarNumeroSesion() {
+  const { data, error } = await supabase
+    .from("Sesiones")
+    .select('"Número de sesión"')
+    .eq("Paciente id", pacienteId);
+
+  console.log("SESIONES DEL PACIENTE:", data);
+  console.log("ERROR:", error);
+
+  if (error) {
+    console.log("ERROR CARGANDO NÚMERO DE SESIÓN:", error);
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    setNumeroSesion(1);
+    return;
+  }
+
+  const numerosExistentes = data
+    .map((sesion: any) =>
+      sesion["Número de sesión"]
+    )
+    .filter(
+      (numero: any) =>
+        numero !== null &&
+        numero !== undefined
+    )
+    .map((numero: any) => Number(numero));
+
+  if (numerosExistentes.length > 0) {
+    const mayorNumero =
+      Math.max(...numerosExistentes);
+
+    setNumeroSesion(mayorNumero + 1);
+  } else {
+    // Sesiones antiguas que todavía no tenían número
+    setNumeroSesion(data.length + 1);
+  }
+}
 async function guardarSesion() {
   console.log("BOTON FUNCIONA");
-const { count } = await supabase
-  .from("Sesiones")
-  .select("*", { count: "exact", head: true })
-  .eq("Paciente id", pacienteId);
-
-const numeroSesion = (count || 0) + 1;
 const { data: sesionCreada, error } =
   await supabase
     .from("Sesiones")
@@ -287,6 +338,7 @@ const { data: sesionCreada, error } =
         "Lugar de atención": lugar,
         Evolución: evolucion,
         Observaciones: observaciones,
+        "Número de sesión": numeroSesion,
       },
     ])
     .select()
@@ -299,7 +351,6 @@ if (error) {
 }
 localStorage.setItem("ultimoLugar", lugar);
 console.log("SESION CREADA:", sesionCreada);
-console.log("NUMERO SESION CALCULADO:", numeroSesion);
 console.log(
   "NUMERO SESION GUARDADO:",
   sesionCreada?.["Número de sesión"]
@@ -391,55 +442,105 @@ router.push(`/equinos/pacientes/${pacienteId}`);
 
         <div className="grid gap-5">
 
-         <input
-  type="date"
-  value={fechaSesion}
-  readOnly
-  className="p-4 rounded-2xl border border-gray-300 bg-gray-100"
-/>
-          <input
-            type="text"
-            placeholder="Veterinario actuante"
-            value={veterinario}
-            onChange={(e) => setVeterinario(e.target.value)}
-            className="p-4 rounded-2xl border border-gray-300"
-          />
+<div>
+  <label className="block font-semibold mb-2">
+    Fecha de sesión
+  </label>
 
-<select
-  value={lugar}
-  onChange={(e) => {
-    if (e.target.value === "__NUEVO_LUGAR__") {
-      const rutaActual = window.location.pathname;
-
-      window.location.href =
-        `/administracion/lugares/nueva?returnTo=${encodeURIComponent(
-          rutaActual
-        )}`;
-
-      return;
+  <input
+    type="date"
+    value={fechaSesion}
+    onChange={(e) =>
+      setFechaSesion(e.target.value)
     }
+    className="p-4 rounded-2xl border border-gray-300 w-full"
+  />
+</div>
 
-    setLugar(e.target.value);
-  }}
-  className="p-4 rounded-2xl border border-gray-300"
->
-  <option value="">
-    Seleccionar lugar de atención
-  </option>
+<div>
+  <label className="block font-semibold mb-2">
+    Número de sesión
+  </label>
 
-  {lugares.map((lugarItem) => (
-    <option
-      key={lugarItem.id}
-      value={lugarItem.Nombre}
-    >
-      {lugarItem.Nombre}
+  <input
+    type="number"
+    min="1"
+    value={numeroSesion}
+    onChange={(e) =>
+      setNumeroSesion(Number(e.target.value))
+    }
+    className="p-4 rounded-2xl border border-gray-300 w-full"
+  />
+</div>
+
+<div>
+  <label className="block font-semibold mb-2">
+    Veterinario actuante
+  </label>
+
+  <select
+    value={veterinario}
+    onChange={(e) =>
+      setVeterinario(e.target.value)
+    }
+    className="p-4 rounded-2xl border border-gray-300 w-full"
+  >
+    <option value="">
+      Seleccionar veterinario
     </option>
-  ))}
 
-  <option value="__NUEVO_LUGAR__">
-    ➕ Agregar nuevo lugar
-  </option>
-</select>
+    {veterinarios.map((veterinarioItem) => (
+      <option
+        key={veterinarioItem.id}
+        value={veterinarioItem.Nombre}
+      >
+        {veterinarioItem.Nombre}
+      </option>
+    ))}
+  </select>
+</div>
+
+<div>
+  <label className="block font-semibold mb-2">
+    Lugar de atención
+  </label>
+
+  <select
+    value={lugar}
+    onChange={(e) => {
+      if (e.target.value === "__NUEVO_LUGAR__") {
+        const rutaActual = window.location.pathname;
+
+        window.location.href =
+          `/administracion/lugares/nueva?returnTo=${encodeURIComponent(
+            rutaActual
+          )}`;
+
+        return;
+      }
+
+      setLugar(e.target.value);
+    }}
+    className="p-4 rounded-2xl border border-gray-300 w-full"
+  >
+    <option value="">
+      Seleccionar lugar de atención
+    </option>
+
+    {lugares.map((lugarItem) => (
+      <option
+        key={lugarItem.id}
+        value={lugarItem.Nombre}
+      >
+        {lugarItem.Nombre}
+      </option>
+    ))}
+
+    <option value="__NUEVO_LUGAR__">
+      ➕ Agregar nuevo lugar
+    </option>
+  </select>
+</div>
 
           <div className="bg-gray-50 rounded-2xl p-4">
 
