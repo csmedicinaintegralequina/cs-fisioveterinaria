@@ -38,7 +38,7 @@ export default function Veterinarios() {
 
         <div className="flex justify-end mb-6">
           <Link
-            href="/equinos/administracion/veterinarios/nuevo"
+            href="/administracion/veterinarios/nuevo"
             className="
               bg-[#0B6A74]
               text-white
@@ -72,14 +72,12 @@ export default function Veterinarios() {
               "
             >
 
-              <div>
-                <h2 className="text-xl font-bold text-[#0B6A74]">
-                  {veterinario.Nombre}
-                </h2>
-              </div>
+              <h2 className="text-xl font-bold text-[#0B6A74]">
+                {veterinario.Nombre}
+              </h2>
 
               <Link
-                href={`/equinos/administracion/veterinarios/${veterinario.id}/editar`}
+                href={`/administracion/veterinarios/${veterinario.id}/editar`}
                 className="
                   text-amber-600
                   font-semibold

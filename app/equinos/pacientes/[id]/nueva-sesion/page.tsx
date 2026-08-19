@@ -319,19 +319,30 @@ for (const item of terapiasSeleccionadas) {
               aplicacion.estructuras.join(", "),
             Observaciones:
               aplicacion.observaciones,
-              "Número de sesión": numeroSesion,
+          
           },
         ])
         .select()
         .single();
 
     if (errorTerapia) {
-      console.log(
-        "ERROR GUARDANDO TERAPIA:",
-        errorTerapia
-      );
-      continue;
-    }
+  console.error(
+    "❌ ERROR GUARDANDO TERAPIA:",
+    errorTerapia
+  );
+
+  alert(
+    "ERROR GUARDANDO TERAPIA: " +
+      errorTerapia.message
+  );
+
+  continue;
+}
+
+console.log(
+  "✅ TERAPIA GUARDADA:",
+  terapiaCreada
+);
 
     for (const parametroId in aplicacion.parametros) {
 

@@ -421,93 +421,144 @@ async function cargarParametrosSesion(
 
 }
 async function guardarSesion() {
-  console.log("BOTON FUNCIONA");
+  console.log("ACTUALIZANDO SESIÓN:", sesionId);
 
-const { data: sesionCreada, error } =
-  await supabase
+  // 1. Actualizar los datos principales de la sesión
+  const { data: sesionActualizada, error } = await supabase
     .from("Sesiones")
-    .insert([
-      {
-        "Paciente id": pacienteId,
-        "Fecha de sesión": fechaSesion,
-        "Veterinario actuante": veterinario,
-        "Lugar de atención": lugar,
-        Evolución: evolucion,
-        Observaciones: observaciones,
-      },
-    ])
+    .update({
+      "Fecha de sesión": fechaSesion,
+      "Veterinario actuante": veterinario,
+      "Lugar de atención": lugar,
+      Evolución: evolucion,
+      Observaciones: observaciones,
+    })
+    .eq("id", sesionId)
     .select()
     .single();
 
-if (error) {
-  console.log("ERROR COMPLETO:", error);
+  if (error) {
+    console.error("ERROR ACTUALIZANDO SESIÓN:", error);
+    return;
+  }
 
-  return;
-}
-console.log("SESION CREADA:", sesionCreada);
-for (const item of terapiasSeleccionadas) {
+  console.log("SESIÓN ACTUALIZADA:", sesionActualizada);
 
-  for (const aplicacion of item.aplicaciones) {
+  // 2. Buscar las terapias actuales de esta sesión
+  const { data: terapiasViejas, error: errorTerapiasViejas } =
+    await supabase
+      .from("Sesión terapias")
+      .select("id")
+      .eq("Sesión id", sesionId);
 
-    const { data: terapiaCreada, error: errorTerapia } =
-      await supabase
-        .from("Sesión terapias")
-        .insert([
-          {
-            "Sesión id": sesionCreada.id,
-            "Terapia id": item.terapiaId,
-            "Región anatómica":
-              aplicacion.estructuras.join(", "),
-            Observaciones:
-              aplicacion.observaciones,
-          },
-        ])
-        .select()
-        .single();
+  if (errorTerapiasViejas) {
+    console.error(
+      "ERROR BUSCANDO TERAPIAS ANTERIORES:",
+      errorTerapiasViejas
+    );
+    return;
+  }
 
-    if (errorTerapia) {
-      console.log(
-        "ERROR GUARDANDO TERAPIA:",
-        errorTerapia
+  // 3. Borrar los parámetros de las terapias anteriores
+  if (terapiasViejas && terapiasViejas.length > 0) {
+    const idsTerapias = terapiasViejas.map((t) => t.id);
+
+    const { error: errorParametros } = await supabase
+      .from("Sesión parámetros")
+      .delete()
+      .in("Sesión terapia id", idsTerapias);
+
+    if (errorParametros) {
+      console.error(
+        "ERROR BORRANDO PARÁMETROS ANTERIORES:",
+        errorParametros
       );
-      continue;
+      return;
     }
+  }
 
-    for (const parametroId in aplicacion.parametros) {
+  // 4. Borrar las terapias anteriores
+  const { error: errorBorradoTerapias } = await supabase
+    .from("Sesión terapias")
+    .delete()
+    .eq("Sesión id", sesionId);
 
-      const { error: errorParametro } =
+  if (errorBorradoTerapias) {
+    console.error(
+      "ERROR BORRANDO TERAPIAS ANTERIORES:",
+      errorBorradoTerapias
+    );
+    return;
+  }
+
+  // 5. Volver a guardar las terapias actuales
+  for (const item of terapiasSeleccionadas) {
+    for (const aplicacion of item.aplicaciones) {
+      const { data: terapiaCreada, error: errorTerapia } =
         await supabase
-          .from("Sesión parámetros")
+          .from("Sesión terapias")
           .insert([
             {
-              "Sesión terapia id":
-                terapiaCreada.id,
-
-              "Parámetro id":
-                parametroId,
-
-              "Valor seleccionado":
-                aplicacion.parametros[parametroId],
+              "Sesión id": sesionId,
+              "Terapia id": item.terapiaId,
+              "Región anatómica":
+                aplicacion.estructuras.join(", "),
+              Observaciones:
+                aplicacion.observaciones,
             },
-          ]);
+          ])
+          .select()
+          .single();
 
-      if (errorParametro) {
-        console.log(
-          "ERROR PARAMETRO:",
-          errorParametro
+      if (errorTerapia) {
+        console.error(
+          "ERROR GUARDANDO TERAPIA:",
+          errorTerapia
         );
+        continue;
       }
 
+      console.log(
+        "TERAPIA ACTUALIZADA:",
+        terapiaCreada
+      );
+
+      // 6. Guardar nuevamente los parámetros
+      for (const parametroId in aplicacion.parametros) {
+        const { error: errorParametro } =
+          await supabase
+            .from("Sesión parámetros")
+            .insert([
+              {
+                "Sesión terapia id":
+                  terapiaCreada.id,
+
+                "Parámetro id":
+                  parametroId,
+
+                "Valor seleccionado":
+                  aplicacion.parametros[parametroId],
+              },
+            ]);
+
+        if (errorParametro) {
+          console.error(
+            "ERROR GUARDANDO PARÁMETRO:",
+            errorParametro
+          );
+        }
+      }
     }
-
   }
 
+  console.log(
+    "✅ SESIÓN ACTUALIZADA CORRECTAMENTE"
+  );
+
+  router.push(
+    `/equinos/pacientes/${pacienteId}`
+  );
 }
-
-console.log("PARAMETROS:", terapiasSeleccionadas);
-
-router.push(`/equinos/pacientes/${pacienteId}`);
-  }
   console.log(
   "ESTADO ANTES DE MOSTRAR:",
   terapiasSeleccionadas
